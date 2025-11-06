@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>EdgeLake Demo – Quick Start &amp; Guide</title>
+<style>
+    :root {
+      --bg: #0b1220;
+      --panel: #0f172a;
+      --panel-2: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --accent-2: #34d399;
+      --border: #1f2937;
+      --warn: #f59e0b;
+      --code-bg: #0a0f1a;
+      --kbd-bg: #111827;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      background: radial-gradient(1200px 800px at 5% -10%, rgba(96,165,250,.12), transparent 60%),
+                  radial-gradient(800px 600px at 100% 0%, rgba(52,211,153,.08), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap {
+      max-width: 980px;
+      margin: 40px auto 80px;
+      padding: 0 20px;
+    }
+    header.hero {
+      background: linear-gradient(160deg, rgba(96,165,250,.16), rgba(52,211,153,.12));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.35);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      letter-spacing: .3px;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+    .badges {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      font-size: .9rem;
+      color: var(--text);
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 900px) {
+      .grid.two { grid-template-columns: 1fr 1fr; }
+      .grid.three { grid-template-columns: repeat(3, 1fr); }
+    }
+    section.card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    section.card h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: rgba(96,165,250,.06);
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+    .warn { border-left-color: var(--warn); background: rgba(245,158,11,.08); }
+    .ok { border-left-color: var(--accent-2); background: rgba(52,211,153,.08); }
+    code, pre, kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: .92rem;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      overflow-x: auto;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor: pointer;
+      font-size: .85rem;
+    }
+    kbd {
+      background: var(--kbd-bg);
+      border: 1px solid var(--border);
+      border-bottom-width: 3px;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: .85rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    thead th {
+      background: rgba(255,255,255,.04);
+      font-weight: 600;
+    }
+    .footer {
+      margin-top: 30px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    details { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+    details summary { cursor: pointer; font-weight: 600; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size: .85rem;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<h1>▶️ EdgeLake Demo – Quick Start</h1>
+<p class="subtitle">A minimal, operator‑friendly guide to launching and exploring the EdgeLake data fabric.</p>
+<div class="badges">
+<span class="badge">OVA boots → containers auto‑start</span>
+<span class="badge">GUI, Query, Operator x2</span>
+<span class="badge">Local‑only endpoints</span>
+</div>
+</header>
+<div class="grid two" style="margin-top: 18px;">
+<section class="card">
+<h2>Automatic Start</h2>
+<p>When the OVA boots, all required containers are launched automatically.</p>
+<div class="callout ok">No action needed for a first‑run demo.</div>
+</section>
+<section class="card">
+<h2>Manual Start (if needed)</h2>
+<p>Launch all EdgeLake containers with:</p>
+<pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/Edgelake
+./ELstartup.sh</code></pre>
+<p>This starts:</p>
+<ul>
+<li><strong>gui-1</strong> – Web UI for monitoring and data management</li>
+<li><strong>grafana</strong> - Sample Dashboard</li>
+<li><strong>edgelake-demo-master</strong> – Control plane</li>
+<li><strong>edgelake-demo-query</strong> – Query node (SQL over Edgelake)</li>
+<li><strong>edgelake-demo-operator</strong> – Data operator node</li>
+<li><strong>edgelake-demo-operator2</strong> – Second data operator node</li>
+</ul>
+</section>
+</div>
+<section class="card">
+<h2>Service Endpoints</h2>
+<table>
+<thead>
+<tr><th>Service</th><th>Role</th><th>Endpoint</th></tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GUI</strong> <span class="pill">gui-1</span></td>
+<td>Web UI</td>
+<td><a href="http://localhost:3001" rel="noopener" target="_blank">http://localhost:3001</a></td>
+</tr>
+<tr>
+<td><strong>Sample Grafana Dashboard</strong> <span class="pill">grafana</span></td>
+<td>Web UI</td>
+<td><a href="http://localhost:3000" rel="noopener" target="_blank">http://localhost:3000</a></td>
+</tr>
+<tr>
+<td><strong>Query Node REST</strong> <span class="pill">edgelake-demo-query</span></td>
+<td>SQL &amp; Fabric Query</td>
+<td><code>vmipaddr:32349</code></td>
+</tr>
+<tr>
+<td><strong>Operator Node REST</strong> <span class="pill">edgelake-demo-operator</span></td>
+<td>Data Ingest / Control</td>
+<td><code>vmmipaddr:32149</code></td>
+</tr>
+<tr>
+<td><strong>Operator2 Node REST</strong> <span class="pill">edgelake-demo-operator2</span></td>
+<td>Data Ingest / Control</td>
+<td><code>vmipaddr:32159</code></td>
+</tr>
+</tbody>
+</table>
+<details style="margin-top:12px;">
+<summary>Using the GUI with a node</summary>
+<p>Open the GUI and insert the <kbd>VM_IP:Port</kbd> of a Query or Operator node in the Connection dialog, then click <em>Use</em>.</p>
+</details>
+</section>
+<div class="grid three">
+<section class="card">
+<h2>Monitor</h2>
+<p>Track resources and health across nodes from the GUI dashboard.</p>
+</section>
+<section class="card">
+<h2>Add Data</h2>
+<p>Load JSON‑formatted data into an <em>operator</em> node via the GUI.</p>
+</section>
+<section class="card">
+<h2>SQL Query</h2>
+<p>Build and run SQL queries from the <em>query</em> node’s GUI tool.</p>
+</section>
+</div>
+<section class="card">
+<h2>Blockchain Manager</h2>
+<p>Inspect blockchain metadata that underpins the data fabric.</p>
+</section>
+<section class="card">
+<h2>Default Demo Dataset</h2>
+<ul>
+<li><strong>Database:</strong> <code>new_company</code></li>
+<li><strong>Table:</strong> <code>rand_data</code></li>
+</ul>
+<div class="callout">This table is pre‑populated via a cloud MQTT feed on first launch.</div>
+</section>
+<section class="card">
+<h2>Add Your Own Data</h2>
+<ol>
+<li>
+<strong>Use the GUI (Operator node)</strong><br/>
+          Click <em>Add Data</em> and provide JSON‑formatted input.
+        </li>
+<li style="margin-top:8px;">
+<strong>Subscribe to a MQTT broker</strong><br/>
+<a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/commands/background_services.md#subscribe-to-broker" rel="noopener" target="_blank">
+            MQTT Background Services (docs)
+          </a>
+</li>
+<li style="margin-top:8px;">
+<strong>Insert via REST API</strong><br/>
+<a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/examples/rest_examples.md#put-request" rel="noopener" target="_blank">
+            REST Insert Examples
+          </a>
+</li>
+</ol>
+<div class="callout warn" style="margin-top:10px;">
+        Tip: Ensure you target an <em>operator</em> node for data insertion and the <em>query</em> node for read/SQL workflows.
+      </div>
+</section>
+<section class="card">
+<h2>Documentation</h2>
+<ul>
+<li><a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/getting_started.md" rel="noopener" target="_blank">Getting Started</a></li>
+<li><a href="https://github.com/EdgeLake/edgelake.github.io/docs/commmands" rel="noopener" target="_blank">Command Reference</a> <span class="pill">external</span></li>
+</ul>
+</section>
+<p class="footer">
+      Pro tip: keep this page open on first boot. Use <kbd>Ctrl</kbd> + <kbd>L</kbd> to focus the address bar quickly, and <kbd>Alt</kbd> + <kbd>←</kbd> to navigate back.
+    </p>
+<section class="card"><h2>Credentials</h2><p>Default demo user credentials (change after first login):</p><ul><li><strong>Username:</strong> edgelake</li><li><strong>Password:</strong> edgelake</li></ul><div class="callout warn">Security note: The default password is 'edgelake'. For production or networked demos, change it immediately.</div></section></div>
+<script>
+    // Copy-to-clipboard buttons for pre blocks
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-target');
+        const pre = document.getElementById(id);
+        const text = pre ? pre.innerText.replace(/^Copy\\s*/,'') : '';
+        navigator.clipboard.writeText(text).then(() => {
+          const prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(() => btn.textContent = prev, 1200);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/edgelake/startup.sh
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name=Startup Script and README
+Comment=Runs Edgelake startup and opens README on login
