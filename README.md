@@ -1,99 +1,289 @@
-# ▶️ EdgeLake Demo – Quick Start
+# 🚀 EdgeLake / AnyLog Demo OVA
 
-A minimal, operator-friendly guide to launching and exploring the EdgeLake + AnyLog data fabric.
+[![Platform](https://img.shields.io/badge/platform-Docker-blue)]()
+[![License](https://img.shields.io/badge/license-Demo-lightgrey)]()
+[![Environment](https://img.shields.io/badge/environment-OVA-green)]()
+[![Status](https://img.shields.io/badge/status-Demo-orange)]()
 
----
-
-## 🚀 Automatic Start
-
-When the OVA boots, all required containers are launched automatically.
-
-> ✅ No action needed for a first-run demo.
+> A fully containerized distributed data fabric demo environment powered by **EdgeLake / AnyLog**.
 
 ---
 
-## ⚙️ Manual Start (if needed)
+# 📑 Table of Contents
 
-Launch all EdgeLake containers with:
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Components](#components)
+- [Installation](#installation)
+- [Startup](#startup)
+- [Service Endpoints](#service-endpoints)
+- [Data Flow](#data-flow)
+- [Default Dataset](#default-dataset)
+- [Security](#security)
+- [Troubleshooting](#troubleshooting)
+- [Tech Stack](#tech-stack)
+
+---
+
+# 📌 Overview
+
+The EdgeLake Demo OVA provides a pre-configured distributed data fabric including:
+
+- GUI Management Interface  
+- Query Node (SQL Federation)  
+- Master Node (Control Plane)  
+- Two Operator Nodes (Data Ingest & Storage)  
+- Grafana Monitoring Dashboard  
+
+Designed for:
+
+- Demonstrations  
+- Training  
+- Evaluation of distributed query fabric  
+- Proof-of-concept deployments  
+
+---
+
+# 🏗 Architecture
+
+```
+                     ┌─────────────────────────┐
+                     │        GUI (3001)       │
+                     │   Web Management UI     │
+                     └────────────┬────────────┘
+                                  │ REST
+        ┌─────────────────────────┴─────────────────────────┐
+        │                                                   │
+┌───────────────┐                               ┌────────────────┐
+│   Query Node  │                               │  Master Node   │
+│ (Port 32349)  │                               │  Control Plane │
+└───────┬───────┘                               └────────────────┘
+        │
+        │ Distributed SQL
+        │
+ ┌──────┴───────────────┐
+ │                      │
+┌──────────────┐  ┌──────────────┐
+│ Operator 1   │  │ Operator 2   │
+│ (32149)      │  │ (32159)      │
+└──────────────┘  └──────────────┘
+```
+
+---
+
+# 🧩 Components
+
+## GUI (`gui-1`)
+- Web-based management interface
+- Monitoring and health status
+- SQL query builder
+- Data ingestion management
+- Blockchain metadata viewer
+
+URL:  
+`http://localhost:3001`
+
+---
+
+## Grafana
+- Sample dashboard
+- System metrics visualization
+
+URL:  
+`http://localhost:3000`
+
+---
+
+## Master Node
+- Cluster coordination
+- Node discovery & registration
+- Metadata orchestration
+
+---
+
+## Query Node
+- Executes distributed SQL queries
+- REST-based query endpoint
+- Aggregates operator results
+
+Port:  
+`VM_IP:32349`
+
+---
+
+## Operator Nodes (x2)
+- Data ingestion endpoints
+- Storage layer
+- MQTT subscription support
+- REST ingestion API
+
+Ports:
+- `VM_IP:32149`
+- `VM_IP:32159`
+
+---
+
+# ⚙ Installation
+
+## 1️⃣ Make Scripts Executable
+
+```bash
+chmod +x ALinstall.sh
+chmod +x ALstartup.sh
+chmod +x startup.sh
+```
+
+## 2️⃣ Configure Environment (Optional)
+
+Edit:
+
+```
+ALinstall.env
+```
+
+## 3️⃣ Run Installation
+
+```bash
+./ALinstall.sh
+```
+
+This will:
+
+- Prepare Docker runtime
+- Configure containers
+- Initialize environment
+
+---
+
+# ▶ Startup
+
+## Automatic
+
+Containers auto-start on OVA boot.
+
+## Manual
 
 ```bash
 cd ~/Edgelake
-./ELstartup.sh
+./ALstartup.sh
 ```
 
-This starts:
+Verify running services:
 
-- **gui-1** – Web UI for monitoring and data management
-- **grafana** - Sample Grafana Dashboard
-- **edgelake-demo-master** – Control plane  
-- **edgelake-demo-query** – Query node (SQL over Edgelake)  
-- **edgelake-demo-operator** – Data operator node  
-- **edgelake-demo-operator2** – Second data operator node  
+```bash
+docker ps
+```
 
 ---
 
-## 🌐 Service Endpoints
+# 🌐 Service Endpoints
 
-| Service               | Role                  | Endpoint                          |
-|-----------------------|-----------------------|-----------------------------------|
-| **GUI** (gui-1)       | Web UI                | [http://localhost:3001](http://localhost:3001) |
-| **Sample Dashboard** (grafana)       | Sample Dashboard                | [http://localhost:3000](http://localhost:300) |
-| **Query Node REST** (edgelake-demo-query) | SQL & Fabric Query     | `vmipaddr:32349` |
-| **Operator Node REST** (edgelake-demo-operator) | Data Ingest / Control | `vmipaddr:32149` |
-| **Operator2 Node REST** (edgelake-demo-operator2) | Data Ingest / Control | `vmipaddr:32159` |
-
-<details>
-<summary>Using the GUI with a node</summary>
-
-Open the GUI and insert the **VM IP:Port** of a Query or Operator node in the Connection dialog, then click **Use**.
-
-</details>
+| Service | URL / Port |
+|----------|------------|
+| GUI | http://localhost:3001 |
+| Grafana | http://localhost:3000 |
+| Query Node | VM_IP:32349 |
+| Operator 1 | VM_IP:32149 |
+| Operator 2 | VM_IP:32159 |
 
 ---
 
-## 🛠️ GUI Features
+# 🔄 Data Flow
 
-- **Monitor** → Track resources and health across nodes  
-- **Add Data** → Load JSON-formatted data into operator nodes  
-- **SQL Query** → Build and run SQL queries on the query node  
-- **Blockchain Manager** → Inspect blockchain metadata  
+## Ingestion Flow
 
----
+1. Data enters an Operator node  
+2. Data is validated & stored  
+3. Metadata written to blockchain layer  
+4. Query node becomes aware of new data  
 
-## 📦 Default Demo Dataset
+## Query Flow
 
-- **Database:** `new_company`  
-- **Table:** `rand_data`  
-
-> This table is pre-populated via a cloud MQTT feed on first launch.
-
----
-
-## ➕ Adding Your Own Data
-
-1. **Use the GUI (Operator node)**  
-   Click **Add Data** and provide JSON-formatted input.
-
-2. **Subscribe to a MQTT broker**  
-   [MQTT Background Services](https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/commands/background_services.md#subscribe-to-broker)
-
-3. **Insert via REST API**  
-   [REST Insert Examples](https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/examples/rest_examples.md#put-request)
-
-> ⚠️ Ensure you target an **operator** node for data insertion and the **query** node for read/SQL workflows.
+1. User submits SQL via GUI  
+2. GUI forwards to Query node  
+3. Query node distributes execution  
+4. Operators return results  
+5. Query node aggregates & returns response  
 
 ---
 
-## 📖 Documentation
+# 📦 Default Dataset
 
-- [Getting Started](https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/getting_started.md)  
-- [Command Reference](https://github.com/EdgeLake/edgelake.github.io/docs/commmands)  
+Database: `new_company`  
+Table: `rand_data`  
+
+Preloaded via MQTT feed on first launch.
 
 ---
 
-💡 Pro tip: keep this README open on first boot.
+# 🔐 Security
+
+Default credentials:
+
+```
+Username: edgelake
+Password: edgelake
+```
+
+⚠ Change immediately for non-demo or networked deployments.
+
+All services are intended for local demo usage.
+
 ---
 
-## 🔐 Credentials
+# 🛠 Troubleshooting
 
-> **Security note:** The default demo **username** is `edgelake` and the **password** is `edgelake`. Change this immediately for any production or networked demo.
+Check running containers:
+
+```bash
+docker ps
+```
+
+Restart services:
+
+```bash
+./ALstartup.sh
+```
+
+Reinstall:
+
+```bash
+./ALinstall.sh
+```
+
+View logs:
+
+```bash
+docker logs <container_name>
+```
+
+---
+
+# 🧰 Tech Stack
+
+- Docker
+- EdgeLake Data Fabric
+- AnyLog Distributed Engine
+- REST APIs
+- MQTT Ingestion
+- SQL Federation
+- Grafana
+- Web GUI
+
+---
+
+# 📣 Summary
+
+The EdgeLake Demo OVA delivers a multi-node distributed data fabric in a single deployable image.
+
+It demonstrates:
+
+- Distributed ingestion  
+- Federated SQL queries  
+- Blockchain-backed metadata  
+- Multi-node orchestration  
+- GUI-driven management  
+
+---
+
+⭐ Designed for technical demos, workshops, and proof-of-concept environments.

@@ -59,7 +59,8 @@ template(name="MyCustomTemplate" type="string" string="<%PRI%>%TIMESTAMP% %HOSTN
 EOF
   sudo systemctl restart rsyslog
 
-for NODE_TYPE in master operator operator2 query; do
+#for NODE_TYPE in master operator operator2 query; do
+for NODE_TYPE in operator operator2 ; do
   echo "Installing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
@@ -173,7 +174,8 @@ do_uninstall () {
 
 cd ~/Anylog/node/docker-compose
 
-for NODE_TYPE in master operator operator2 query; do
+#for NODE_TYPE in master operator operator2 query; do
+for NODE_TYPE in operator operator2 ; do
   echo "Removing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
