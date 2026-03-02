@@ -39,6 +39,10 @@ do_install() {
 #  usermod -aG docker ${USER}
 #  newgrp docker
 
+# Install startup scripts
+mkdir -p ~/.config/autostart
+cp startup-readme.desktop ~/.config/autostart/
+
 #  Install node
   mkdir -p ~/Anylog/node
   cd ~/Anylog/node
@@ -59,8 +63,8 @@ template(name="MyCustomTemplate" type="string" string="<%PRI%>%TIMESTAMP% %HOSTN
 EOF
   sudo systemctl restart rsyslog
 
-#for NODE_TYPE in master operator operator2 query; do
-for NODE_TYPE in operator operator2 ; do
+for NODE_TYPE in master operator operator2 query; do
+#for NODE_TYPE in operator operator2 ; do
   echo "Installing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
@@ -157,7 +161,7 @@ for NODE_TYPE in operator operator2 ; do
       make up ANYLOG_TYPE="${NODE_TYPE}"
     
       # run remote gui and dashboard
-      docker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32349 --name grafana anylogco/oh-grafana:latest
+      #ocker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32349 --name grafana anylogco/oh-grafana:latest
       ;;
 
   *)

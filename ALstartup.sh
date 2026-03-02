@@ -1,5 +1,41 @@
-
 #!/bin/bash
+
+# setup initial license key
+ENV_FILE="~/Anylog/Anylog/ALinstall.env
+# Ensure ile exists
+if [ ! -f "$ENV_FILE" ]; then
+    echo "Error: $ENV_FILE not found."
+    exit 1
+fi
+
+# Extract current LICENSE_KEY value
+CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | cut -d '"' -f2)
+
+# If variable not found
+if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
+    echo "LICENSE_KEY variable not found in $ENV_FILE"
+    exit 1
+fi
+
+# If blank → prompt user
+if [ -z "$CURRENT_KEY" ]; then
+    echo "LICENSE_KEY is currently blank."
+    echo "You can request a new license key at https://www.anylog.network/download"
+    read -p "Please enter your new LICENSE_KEY: " NEW_KEY
+
+    # Ensure user entered something
+    if [ -z "$NEW_KEY" ]; then
+        echo "No key entered. Exiting."
+        exit 1
+    fi
+
+    # Replace LICENSE_KEY="" with new key
+    sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$ENV_FILE"
+
+    echo "LICENSE_KEY updated successfully."
+else
+    echo "LICENSE_KEY already set. No action needed."
+fi
 # Start Edgelake Services
 cd ~/Anylog/node/docker-compose
 make up EDGELAKE_TYPE=master
