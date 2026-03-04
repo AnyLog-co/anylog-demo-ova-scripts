@@ -38,10 +38,10 @@ else
 fi
 # Start Edgelake Services
 cd ~/Anylog/node/docker-compose
-make up EDGELAKE_TYPE=master
-make up EDGELAKE_TYPE=operator
-make up EDGELAKE_TYPE=operator2
-make up EDGELAKE_TYPE=query
+make up EDGELAKE_TYPE=anylog-master
+make up EDGELAKE_TYPE=anylog-operator
+make up EDGELAKE_TYPE=anylog-operator2
+make up EDGELAKE_TYPE=anylog-query
 
 # Load env variables
 set -a

@@ -179,8 +179,8 @@ do_uninstall () {
 
 cd ~/Anylog/node/docker-compose
 
-#for NODE_TYPE in master operator operator2 query; do
-for NODE_TYPE in operator operator2 ; do
+for NODE_TYPE in anylog-master anylog-operator anylog-operator2 anylog-query; do
+#for NODE_TYPE in operator operator2 ; do
   echo "Removing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
@@ -204,7 +204,7 @@ for NODE_TYPE in operator operator2 ; do
     ;;
 
   *)
-    echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'master', 'query' or \ 'operator[2]')." >&2
+    echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-master', 'anylog-query' or \ 'anylog-operator[2]')." >&2
     exit 1
     ;;
 

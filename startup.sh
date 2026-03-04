@@ -1,6 +1,6 @@
 #!/bin/bash
 # startup Anylog
-/home/Anylog/Anylog/ALstartup.sh
+/home/edgelake/Anylog/ALstartup.sh
 
 # Open README.md with the default text editor
-xdg-open /home/Anylog/Anylog/README.html
+xdg-open /home/edgelake/Anylog/README.html

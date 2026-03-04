@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=/home/edgelake/startup.sh
+Exec=/home/edgelake/Anylog/startup.sh
 Hidden=false
 X-GNOME-Autostart-enabled=true
 Name=Startup Script and README
