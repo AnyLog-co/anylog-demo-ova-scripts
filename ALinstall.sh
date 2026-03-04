@@ -92,7 +92,7 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
       make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
 
-  operator)
+  anylog-operator)
       ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
       AENV="docker-makefiles/${NODE_TYPE}/advance_configs.env"
       ensure_kv "NODE_NAME"     "${h}-operator"          "$ENV"
@@ -171,7 +171,7 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
  #     ;;
 
   *)
-      echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone', 'operator')." >&2
+      echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone', 'anylog-operator')." >&2
       exit 1
       ;;
   esac
