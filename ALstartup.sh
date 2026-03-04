@@ -8,6 +8,12 @@ if [ ! -f "$ENV_FILE" ]; then
     exit 1
 fi
 
+# Load env variables
+set -a
+source $ENV_FILE
+set +a
+IP_ADDR=$(ip -4 addr show "$NIC_TYPE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+
 # Extract current LICENSE_KEY value
 CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | cut -d '"' -f2)
 
@@ -38,16 +44,8 @@ else
 fi
 # Start Edgelake Services
 cd ~/Anylog/node/docker-compose
-make up EDGELAKE_TYPE=anylog-master
-make up EDGELAKE_TYPE=anylog-operator
-make up EDGELAKE_TYPE=anylog-operator2
-make up EDGELAKE_TYPE=anylog-query
-
-# Load env variables
-set -a
-source ~/Anylog/Anylog/ALinstall.env
-set +a
-IP_ADDR=$(ip -4 addr show "$NIC_TYPE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+sudo make up EDGELAKE_TYPE=anylog-standalone
+sudo make up EDGELAKE_TYPE=anylog-operator
 
 # start sample grafana dashboard
-docker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32349 --name grafana anylogco/oh-grafana:latest
+sudo docker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32349 --name grafana anylogco/oh-grafana:latest

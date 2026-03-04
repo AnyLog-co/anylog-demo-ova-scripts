@@ -184,32 +184,24 @@ do_uninstall () {
 
 cd ~/Anylog/node/docker-compose
 
-for NODE_TYPE in anylog-master anylog-operator anylog-operator2 anylog-query; do
+for NODE_TYPE in anylog-standalone anylog-operator; do
 #for NODE_TYPE in operator operator2 ; do
   echo "Removing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
-  master)
-    make clean ANYLOG_TYPE="${NODE_TYPE}"
-    ;;
-
-  operator)
-    make clean ANYLOG_TYPE="${NODE_TYPE}"
-    ;;
-
-  operator2)
-    make clean ANYLOG_TYPE="${NODE_TYPE}"
-    ;;
-
-  query)
+  anylog-standalone)
     make clean ANYLOG_TYPE="${NODE_TYPE}"
     docker kill grafana
     docker rm grafana
     docker rmi anylogco/oh-grafana:latest
     ;;
 
+  anylog-operator)
+    make clean ANYLOG_TYPE="${NODE_TYPE}"
+    ;;
+
   *)
-    echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-master', 'anylog-query' or \ 'anylog-operator[2]')." >&2
+    echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone'  or  'anylog-operator')." >&2
     exit 1
     ;;
 
