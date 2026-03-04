@@ -170,7 +170,7 @@
 <h1>▶️ Anylog Demo – Quick Start</h1>
 <p class="subtitle">A minimal, operator‑friendly guide to launching and exploring the Anylog edge data fabric.</p>
 <div class="badges">
-<span class="badge">OVA boots → configure containers</span>
+<span class="badge">OVA boots → containers auto‑start</span>
 <span class="badge">GUI, Query, Operator x2</span>
 <span class="badge">Local‑only endpoints</span>
 </div>
@@ -178,7 +178,7 @@
 <div class="grid two" style="margin-top: 18px;">
 <section class="card">
 <h2>Start Anylog Edge Data Fabric/Historian</h2>
-<p>If this is the first time starting the Demo VM, start a terminal prompt and launch initial containers. This only has to be done the first time the VM runs: </p>
+<p>If this is the first time starting the Demo VM, Start a shell prompt and launch initial containers. This only has to be done the first time the VM runs: with:</p>
 <pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/Anylog
 ./ALstartup.sh</code></pre>
 <p>This starts:</p>
@@ -186,9 +186,19 @@
 <li><strong>gui-1</strong> – Web UI for monitoring and data management</li>
 <li><strong>grafana</strong> - Sample Dashboard</li>
 <li><strong>Anylog-Demo-standalone</strong> – Master (control plane)/perator (data operator)/Query (SQL over Anylog"</li>
-<li><strong>Anylog-Demo-operator</strong> – Second data operator node</li>
+<li><strong>Anylog-Demo-operator2</strong> – Second data operator node</li>
 </ul>
 <p class="callout warn" style="margin-top:10px;">Note: After the initial starting of the services, wait several minutes while Anylog services start up.</p>
+</section>
+<section class="card">
+<h2>Anylog CLI</h2>
+<p>To connect to Anylog CLI on the two nodes do the following steps:</p>
+<pre><code>cd ~/Anylog/node/docker-compose</code></pre>
+<p>Then type:</p>
+<ul>
+  <li><code>make attach ANYLOG_TYPE=anylog-standalone</code> to access the query and operator1 CLI</li>
+  <li><code>make attach ANYLOG_TYPE=anylog-operator</code> to access the operator2 CLI</li>
+</ul>
 </section>
 </div>
 <section class="card">
@@ -209,12 +219,12 @@
 <td><a href="http://localhost:3000" rel="noopener" target="_blank">http://localhost:3000</a></td>
 </tr>
 <tr>
-<td><strong>Query Node REST</strong> <span class="pill">edgelake-demo-standalone</span></td>
+<td><strong>Query Node REST</strong> <span class="pill">Anylog-Demo-standalone</span></td>
 <td>SQL &amp; Fabric Query</td>
 <td><code>vmipaddr:32149</code></td>
 </tr>
 <tr>
-<td><strong>Operator Node REST</strong> <span class="pill">edgelake-demo-operator</span></td>
+<td><strong>Operator Node REST</strong> <span class="pill">Anylog-Demo-operator</span></td>
 <td>Data Ingest / Control</td>
 <td><code>vmmipaddr:32152</code></td>
 </tr>
@@ -260,13 +270,13 @@
         </li>
 <li style="margin-top:8px;">
 <strong>Subscribe to a MQTT broker</strong><br/>
-<a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/commands/background_services.md#subscribe-to-broker" rel="noopener" target="_blank">
+<a href="https://github.com/EdgeLake/Anylog-Demo.github.io/blob/main/docs/commands/background_services.md#subscribe-to-broker" rel="noopener" target="_blank">
             MQTT Background Services (docs)
           </a>
 </li>
 <li style="margin-top:8px;">
 <strong>Insert via REST API</strong><br/>
-<a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/examples/rest_examples.md#put-request" rel="noopener" target="_blank">
+<a href="https://github.com/EdgeLake/Anylog-Demo.github.io/blob/main/docs/examples/rest_examples.md#put-request" rel="noopener" target="_blank">
             REST Insert Examples
           </a>
 </li>
@@ -278,8 +288,8 @@
 <section class="card">
 <h2>Documentation</h2>
 <ul>
-<li><a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/getting_started.md" rel="noopener" target="_blank">Getting Started</a></li>
-<li><a href="https://github.com/EdgeLake/edgelake.github.io/docs/commmands" rel="noopener" target="_blank">Command Reference</a> <span class="pill">external</span></li>
+<li><a href="https://github.com/EdgeLake/Anylog-Demo.github.io/blob/main/docs/getting_started.md" rel="noopener" target="_blank">Getting Started</a></li>
+<li><a href="https://github.com/EdgeLake/Anylog-Demo.github.io/docs/commmands" rel="noopener" target="_blank">Command Reference</a> <span class="pill">external</span></li>
 </ul>
 </section>
 <section class="card">
@@ -289,7 +299,7 @@
 <p class="footer">
       Pro tip: keep this page open on first boot. Use <kbd>Ctrl</kbd> + <kbd>L</kbd> to focus the address bar quickly, and <kbd>Alt</kbd> + <kbd>←</kbd> to navigate back.
     </p>
-<section class="card"><h2>Credentials</h2><p>Default demo user credentials (change after first login):</p><ul><li><strong>Username:</strong> edgelake</li><li><strong>Password:</strong> edgelake</li></ul><div class="callout warn">Security note: The default password is 'edgelake'. For production or networked demos, change it immediately.</div></section></div>
+<section class="card"><h2>Credentials</h2><p>Default demo user credentials (change after first login):</p><ul><li><strong>Username:</strong> Anylog-Demo</li><li><strong>Password:</strong> Anylog-Demo</li></ul><div class="callout warn">Security note: The default password is 'Anylog-Demo'. For production or networked demos, change it immediately.</div></section></div>
 <script>
     // Copy-to-clipboard buttons for pre blocks
     document.querySelectorAll('.copy-btn').forEach(btn => {
