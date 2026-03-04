@@ -70,8 +70,8 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
   
   case "$NODE_TYPE" in
   anylog-standalone)
-      ENV="docker-makefiles/${NODE_TYPE}-configs/base_configs.env"
-      AENV="docker-makefiles/${NODE_TYPE}-configs/advance_configs.env"
+      ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+      AENV="docker-makefiles/${NODE_TYPE}/advance_configs.env"
       ensure_kv "NODE_NAME"     "${h}-standalone"        "$ENV"
       ensure_kv "COMPANY_NAME"  "${COMPANY_NAME}"        "$ENV"
       ensure_kv "LICENSE_KEY"   "${LICENSE_KEY}"         "$ENV"
@@ -93,8 +93,8 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
       ;;
 
   operator)
-      ENV="docker-makefiles/${NODE_TYPE}-configs/base_configs.env"
-      AENV="docker-makefiles/${NODE_TYPE}-configs/advance_configs.env"
+      ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+      AENV="docker-makefiles/${NODE_TYPE}/advance_configs.env"
       ensure_kv "NODE_NAME"     "${h}-operator"          "$ENV"
       ensure_kv "COMPANY_NAME"  "${COMPANY_NAME}"        "$ENV"
       ensure_kv "LEDGER_CONN"   "${LEDGER_CONN}"         "$ENV"
