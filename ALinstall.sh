@@ -46,7 +46,7 @@ cp startup-readme.desktop ~/.config/autostart/
 #  Install node
   mkdir -p ~/Anylog/node
   cd ~/Anylog/node
-  git clone -b os-dev https://github.com/anylog-co/docker-compose
+#  git clone -b pre-develop https://github.com/anylog-co/docker-compose
   cd docker-compose
   docker login -u anyloguser -p dckr_pat_tWYofE1Jx68FXXE9kisQONXE2Sw  
 
