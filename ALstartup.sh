@@ -2,6 +2,8 @@
 
 # setup initial license key
 ENV_FILE="/home/edgelake/Anylog/ALinstall.env"
+STANDALONE_CFG="/home/edgelake/Anylog/node/docker-compose/docker-makefile/anylog-operator/base_configs.env"
+OPERATOR_CFG="/home/edgelake/Anylog/node/docker-compose/docker-makefile/anylog-operator/base_configs.env"
 # Ensure ile exists
 if [ ! -f "$ENV_FILE" ]; then
     echo "Error: $ENV_FILE not found."
@@ -37,6 +39,8 @@ if [ -z "$CURRENT_KEY" ]; then
 
     # Replace LICENSE_KEY="" with new key
     sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$ENV_FILE"
+    sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$STANDALONE_CFG"
+    sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$OPERATOR_CFG"
 
     echo "LICENSE_KEY updated successfully."
 else
