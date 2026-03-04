@@ -170,20 +170,15 @@
 <h1>▶️ Anylog Demo – Quick Start</h1>
 <p class="subtitle">A minimal, operator‑friendly guide to launching and exploring the Anylog edge data fabric.</p>
 <div class="badges">
-<span class="badge">OVA boots → containers auto‑start</span>
+<span class="badge">OVA boots → configure containers</span>
 <span class="badge">GUI, Query, Operator x2</span>
 <span class="badge">Local‑only endpoints</span>
 </div>
 </header>
 <div class="grid two" style="margin-top: 18px;">
 <section class="card">
-<h2>Automatic Start</h2>
-<p>When the OVA boots, all required containers are launched automatically.</p>
-<div class="callout ok">No action needed for a first‑run demo.</div>
-</section>
-<section class="card">
-<h2>Manual Start (if needed)</h2>
-<p>Launch all Anylog containers with:</p>
+<h2>Start Anylog Edge Data Fabric/Historian</h2>
+<p>If this is the first time starting the Demo VM, start a shell prompt and launch initial containers. This only has to be done the first time the VM runs: </p>
 <pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/Anylog
 ./ALstartup.sh</code></pre>
 <p>This starts:</p>
@@ -193,6 +188,7 @@
 <li><strong>edgelake-demo-standalone</strong> – Master (control plane)/perator (data operator)/Query (SQL over Anylog"</li>
 <li><strong>edgelake-demo-operator2</strong> – Second data operator node</li>
 </ul>
+<p class="callout warn" style="margin-top:10px;">Note: After the initial starting of the services, wait several minutes while Anylog services start up.</p>
 </section>
 </div>
 <section class="card">
@@ -285,6 +281,10 @@
 <li><a href="https://github.com/EdgeLake/edgelake.github.io/blob/main/docs/getting_started.md" rel="noopener" target="_blank">Getting Started</a></li>
 <li><a href="https://github.com/EdgeLake/edgelake.github.io/docs/commmands" rel="noopener" target="_blank">Command Reference</a> <span class="pill">external</span></li>
 </ul>
+</section>
+<section class="card">
+<h2>Support</h2>
+<p>Contact us on Slack in <strong>EdgeLake</strong> or email <a href="mailto:support@anylog.co">support@anylog.co</a>.</p>
 </section>
 <p class="footer">
       Pro tip: keep this page open on first boot. Use <kbd>Ctrl</kbd> + <kbd>L</kbd> to focus the address bar quickly, and <kbd>Alt</kbd> + <kbd>←</kbd> to navigate back.
