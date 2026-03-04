@@ -14,6 +14,7 @@ fi
 set -a
 source $ENV_FILE
 set +a
+NIC_TYPE=$(ip route | grep default | awk '{print $5}')
 IP_ADDR=$(ip -4 addr show "$NIC_TYPE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 
 # Extract current LICENSE_KEY value
