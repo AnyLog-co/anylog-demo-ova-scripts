@@ -89,7 +89,7 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
       ensure_kv "MONITOR_NODES" "true"                   "$ENV"
       ensure_kv "STORE_MONITORING" "true"                "$ENV"
       
-      make up ANYLOG_TYPE="${NODE_TYPE}"
+      #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
 
   anylog-operator)
@@ -116,7 +116,7 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
       ensure_kv "STORE_MONITORING" "true"                "$ENV"
       ensure_kv "SYSLOG_MONITORING" "true"               "$ENV"
 
-      make up ANYLOG_TYPE="${NODE_TYPE}"
+      #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
 
  # operator2)
