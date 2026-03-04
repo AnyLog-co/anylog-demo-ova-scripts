@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>EdgeLake Demo – Quick Start &amp; Guide</title>
+<title>Anylog Demo – Quick Start &amp; Guide</title>
 <style>
     :root {
       --bg: #0b1220;
@@ -167,8 +167,8 @@
 <body>
 <div class="wrap">
 <header class="hero">
-<h1>▶️ EdgeLake Demo – Quick Start</h1>
-<p class="subtitle">A minimal, operator‑friendly guide to launching and exploring the EdgeLake data fabric.</p>
+<h1>▶️ Anylog Demo – Quick Start</h1>
+<p class="subtitle">A minimal, operator‑friendly guide to launching and exploring the Anylog edge data fabric.</p>
 <div class="badges">
 <span class="badge">OVA boots → containers auto‑start</span>
 <span class="badge">GUI, Query, Operator x2</span>
@@ -183,16 +183,14 @@
 </section>
 <section class="card">
 <h2>Manual Start (if needed)</h2>
-<p>Launch all EdgeLake containers with:</p>
-<pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/Edgelake
-./ELstartup.sh</code></pre>
+<p>Launch all Anylog containers with:</p>
+<pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/Anylog
+./ALstartup.sh</code></pre>
 <p>This starts:</p>
 <ul>
 <li><strong>gui-1</strong> – Web UI for monitoring and data management</li>
 <li><strong>grafana</strong> - Sample Dashboard</li>
-<li><strong>edgelake-demo-master</strong> – Control plane</li>
-<li><strong>edgelake-demo-query</strong> – Query node (SQL over Edgelake)</li>
-<li><strong>edgelake-demo-operator</strong> – Data operator node</li>
+<li><strong>edgelake-demo-standalone</strong> – Master (control plane)/perator (data operator)/Query (SQL over Anylog"</li>
 <li><strong>edgelake-demo-operator2</strong> – Second data operator node</li>
 </ul>
 </section>
@@ -215,21 +213,16 @@
 <td><a href="http://localhost:3000" rel="noopener" target="_blank">http://localhost:3000</a></td>
 </tr>
 <tr>
-<td><strong>Query Node REST</strong> <span class="pill">edgelake-demo-query</span></td>
+<td><strong>Query Node REST</strong> <span class="pill">edgelake-demo-standalone</span></td>
 <td>SQL &amp; Fabric Query</td>
-<td><code>vmipaddr:32349</code></td>
+<td><code>vmipaddr:32049</code></td>
 </tr>
 <tr>
 <td><strong>Operator Node REST</strong> <span class="pill">edgelake-demo-operator</span></td>
 <td>Data Ingest / Control</td>
-<td><code>vmmipaddr:32149</code></td>
+<td><code>vmmipaddr:32152</code></td>
 </tr>
 <tr>
-<td><strong>Operator2 Node REST</strong> <span class="pill">edgelake-demo-operator2</span></td>
-<td>Data Ingest / Control</td>
-<td><code>vmipaddr:32159</code></td>
-</tr>
-</tbody>
 </table>
 <details style="margin-top:12px;">
 <summary>Using the GUI with a node</summary>
