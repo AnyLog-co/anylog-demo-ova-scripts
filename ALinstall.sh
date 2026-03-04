@@ -190,14 +190,17 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
   
   case "$NODE_TYPE" in
   anylog-standalone)
-    make clean ANYLOG_TYPE="${NODE_TYPE}"
-    docker kill grafana
-    docker rm grafana
-    docker rmi anylogco/oh-grafana:latest
+    sudo make clean ANYLOG_TYPE="${NODE_TYPE}"
+    sudo docker kill gui-1
+    sudo docker rm gui-1
+    sudo docker rmi anylogco/anylog-gui:latest
+    sudo docker kill grafana
+    sudo docker rm grafana
+    sudo docker rmi anylogco/oh-grafana:latest
     ;;
 
   anylog-operator)
-    make clean ANYLOG_TYPE="${NODE_TYPE}"
+    sudo make clean ANYLOG_TYPE="${NODE_TYPE}"
     ;;
 
   *)
