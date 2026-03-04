@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # setup initial license key
-ENV_FILE="/home/edgelake/Anylog/Anylog/ALinstall.env"
+ENV_FILE="/home/edgelake/Anylog/ALinstall.env"
 # Ensure ile exists
 if [ ! -f "$ENV_FILE" ]; then
     echo "Error: $ENV_FILE not found."
