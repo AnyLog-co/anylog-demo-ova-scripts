@@ -2,8 +2,8 @@
 
 # setup initial license key
 ENV_FILE="/home/edgelake/Anylog/ALinstall.env"
-STANDALONE_CFG="/home/edgelake/Anylog/node/docker-compose/docker-makefile/anylog-operator/base_configs.env"
-OPERATOR_CFG="/home/edgelake/Anylog/node/docker-compose/docker-makefile/anylog-operator/base_configs.env"
+STANDALONE_CFG="/home/edgelake/Anylog/node/docker-compose/docker-makefiles/anylog-operator/base_configs.env"
+OPERATOR_CFG="/home/edgelake/Anylog/node/docker-compose/docker-makefiles/anylog-operator/base_configs.env"
 # Ensure ile exists
 if [ ! -f "$ENV_FILE" ]; then
     echo "Error: $ENV_FILE not found."
