@@ -4,6 +4,7 @@
 set -a
 source ./ALinstall.env
 set +a
+NIC_TYPE=$(ip route | grep default | awk '{print $5}')
 IP_ADDR=$(ip -4 addr show "$NIC_TYPE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 
 # Cross-platform in-place sed (GNU/BSD)
