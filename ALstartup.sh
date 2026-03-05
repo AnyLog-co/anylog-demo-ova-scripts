@@ -49,7 +49,7 @@ else
 fi
 # Start Edgelake Services
 cd ~/Anylog/node/docker-compose
-sudo make up ANYLOG_TYPE=anylog-standalone
+sudo make up ANYLOG_TYPE=anylog-standalone-operator
 sudo make up ANYLOG_TYPE=anylog-operator
 sudo docker run -it -d -p 3001:3001 -p 8000:8000 --restart unless-stopped -e REACT_APP_API_URL=http://"$IP_ADDR":8000 --name gui-1 anylogco/remote-gui:beta
 
