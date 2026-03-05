@@ -65,12 +65,12 @@ template(name="MyCustomTemplate" type="string" string="<%PRI%>%TIMESTAMP% %HOSTN
 EOF
   sudo systemctl restart rsyslog
 
-for NODE_TYPE in anylog-standalone anylog-operator; do
+for NODE_TYPE in anylog-standalone-operator anylog-operator; do
 #for NODE_TYPE in operator operator2 ; do
   echo "Installing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
-  anylog-standalone)
+  anylog-standalone-operator)
       ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
       AENV="docker-makefiles/${NODE_TYPE}/advance_configs.env"
       ensure_kv "NODE_NAME"     "${h}-standalone"        "$ENV"
@@ -120,59 +120,8 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
       #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
 
- # operator2)
- #     cp -r docker-makefiles/operator-configs docker-makefiles/operator2-configs
- #     ENV="docker-makefiles/operator2-configs/base_configs.env"
- #     AENV="docker-makefiles/operator2-configs/advance_configs.env"
- #     ensure_kv "NODE_NAME"     "${h}-operator2"         "$ENV"
- #     ensure_kv "COMPANY_NAME"  "${COMPANY_NAME}"        "$ENV"
- #     ensure_kv "LEDGER_CONN"   "${LEDGER_CONN}"         "$ENV"
- #     ensure_kv "LICENSE_KEY"   "${LICENSE_KEY}"         "$ENV"
- #     ensure_kv "TCP_BIND"      "${TCP_BIND}"            "$ENV"
- #     ensure_kv "ENABLE_EXTERNAL_DNS" "${ENABLE_EXTERNAL_DNS}" "$ENV"
- #     ensure_kv "ENABLE_DNS"    "${ENABLE_DNS}"          "$ENV"
- #     ensure_kv "DNS_DOMAIN"    "${DNS_DOMAIN}"          "$ENV"
- #     ensure_kv "REST_BIND"     "false"                  "$ENV"
- #     ensure_kv "BROKER_BIND"   "false"                  "$ENV"
- #     ensure_kv "ANYLOG_SERVER_PORT" "32158"             "$ENV"
- #     ensure_kv "ANYLOG_REST_PORT"   "32159"             "$ENV"
- #     ensure_kv "NIC_TYPE"      "${NIC_TYPE}"            "$AENV"
- #     ensure_kv "CLUSTER_NAME"  "${h}-operator2-cluster" "$ENV"
- #     ensure_kv "ENABLE_MQTT"   "true"                   "$ENV"
- #     ensure_kv "MQTT_BROKER"   "172.104.228.251"        "$ENV"
- #     ensure_kv "MONITOR_NODES" "true"                   "$ENV"
- #     ensure_kv "STORE_MONITORING" "true"                "$ENV"
- #     ensure_kv "SYSLOG_MONITORING" "false"              "$ENV"
-
- #     make up ANYLOG_TYPE="${NODE_TYPE}"
- #     ;;
-     
- # query)
- #     ENV="docker-makefiles/query-configs/base_configs.env"
- #     AENV="docker-makefiles/query-configs/advance_configs.env"
- #     ensure_kv "NODE_NAME"     "${h}-query"             "$ENV"
- #     ensure_kv "COMPANY_NAME"  "${COMPANY_NAME}"        "$ENV"
- #     ensure_kv "LEDGER_CONN"   "${LEDGER_CONN}"         "$ENV"
- #     ensure_kv "LICENSE_KEY"   "${LICENSE_KEY}"         "$ENV"
- #     ensure_kv "TCP_BIND"      "${TCP_BIND}"            "$ENV"
- #     ensure_kv "ENABLE_EXTERNAL_DNS" "${ENABLE_EXTERNAL_DNS}" "$ENV"
- #     ensure_kv "ENABLE_DNS"    "${ENABLE_DNS}"          "$ENV"
- #     ensure_kv "DNS_DOMAIN"    "${DNS_DOMAIN}"          "$ENV"
- #     ensure_kv "REST_BIND"     "false"                  "$ENV"
- #     ensure_kv "BROKER_BIND"   "false"                  "$ENV"
- #     ensure_kv "NIC_TYPE"      "${NIC_TYPE}"            "$AENV"
- #     ensure_kv "REMOTE_CLI"    "true"                   "$ENV"
- #     ensure_kv "MONITOR_NODES" "true"                   "$ENV"
- #     ensure_kv "STORE_MONITORING" "true"                "$ENV"
- #     
- #     make up ANYLOG_TYPE="${NODE_TYPE}"
-     
- #     # run remote gui and dashboard
- #     docker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32349 --name grafana anylogco/oh-grafana:latest
- #     ;;
-
   *)
-      echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone', 'anylog-operator')." >&2
+      echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone-operator', 'anylog-operator')." >&2
       exit 1
       ;;
   esac
@@ -185,9 +134,6 @@ do_uninstall () {
 
 cd ~/Anylog/node/docker-compose
 
-for NODE_TYPE in anylog-standalone anylog-operator; do
-#for NODE_TYPE in operator operator2 ; do
-  echo "Removing node: $NODE_TYPE"
   
   case "$NODE_TYPE" in
   anylog-standalone)
@@ -205,7 +151,7 @@ for NODE_TYPE in anylog-standalone anylog-operator; do
     ;;
 
   *)
-    echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone'  or  'anylog-operator')." >&2
+    echo "ERROR: Unknown NODE_TYPE '$NODE_TYPE' (expected 'anylog-standalone-operator'  or  'anylog-operator')." >&2
     exit 1
     ;;
 
