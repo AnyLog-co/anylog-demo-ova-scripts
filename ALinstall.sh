@@ -136,7 +136,7 @@ cd ~/Anylog/node/docker-compose
 for NODE_TYPE in anylog-standalone-operator anylog-operator; do
 
   case "$NODE_TYPE" in
-  anylog-standalone)
+  anylog-standalone-operator)
     sudo make clean ANYLOG_TYPE="${NODE_TYPE}"
     sudo docker kill gui-1
     sudo docker rm gui-1
