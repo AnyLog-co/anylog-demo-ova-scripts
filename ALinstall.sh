@@ -86,8 +86,10 @@ for NODE_TYPE in anylog-standalone-operator anylog-operator; do
       ensure_kv "CLUSTER_NAME"  "${h}-standalone-cluster"  "$ENV"
       ensure_kv "ENABLE_MQTT"   "true"                   "$AENV"
       ensure_kv "MQTT_BROKER"   "172.104.228.251"        "$ENV"
-      ensure_kv "MONITOR_NODES" "true"                   "$ENV"
-      ensure_kv "STORE_MONITORING" "true"                "$ENV"
+      ensure_kv "NODE_MONITORING" "true"                 "$AENV"
+      ensure_kv "STORE_MONITORING" "true"                "$AENV"
+      ensure_kv "SYSLOG_MONITORING" "true"               "$AENV"
+      ensure_kv "DOCKEER_MONITORING" "true"              "$AENV"
       
       #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
@@ -113,8 +115,10 @@ for NODE_TYPE in anylog-standalone-operator anylog-operator; do
       ensure_kv "ENABLE_MQTT"   "true"                   "$AENV"
       ensure_kv "MQTT_BROKER"   "172.104.228.251"        "$ENV"
       ensure_kv "MONITOR_NODES" "true"                   "$ENV"
-      ensure_kv "STORE_MONITORING" "true"                "$ENV"
-      ensure_kv "SYSLOG_MONITORING" "true"               "$ENV"
+      ensure_kv "NODE_MONITORING" "true"                 "$AENV"
+      ensure_kv "STORE_MONITORING" "true"                "$AENV"
+      ensure_kv "SYSLOG_MONITORING" "true"               "$AENV"
+      ensure_kv "DOCKEER_MONITORING" "true"              "$AENV"
 
       #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
