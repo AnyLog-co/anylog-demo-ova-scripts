@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Anylog Demo – Quick Start &amp; Guide</title>
+<title>AnyLog Demo – Quick Start &amp; Guide</title>
 <style>
     :root {
       --bg: #0b1220;
@@ -167,8 +167,8 @@
 <body>
 <div class="wrap">
 <header class="hero">
-<h1>▶️ Anylog Demo – Quick Start</h1>
-<p class="subtitle">A minimal, operator‑friendly guide to launching and exploring the Anylog edge data fabric.</p>
+<h1>▶️ AnyLog Demo – Quick Start</h1>
+<p class="subtitle">A concise, operator-friendly guide to launching, connecting to, and exploring the AnyLog edge data fabric demo.</p>
 <div class="badges">
 <span class="badge">OVA boots → containers auto‑start</span>
 <span class="badge">GUI, Query, Operator x2</span>
@@ -177,23 +177,23 @@
 </header>
 <div class="grid two" style="margin-top: 18px;">
 <section class="card">
-<h2>Start Anylog Edge Data Fabric/Historian</h2>
+<h2>Start AnyLog Edge Data Fabric/Historian</h2>
 <p>If this is the first time starting the Demo VM, Start a shell prompt and launch initial containers. This only has to be done the first time the VM runs: with:</p>
-<pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/Anylog
+<pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/AnyLog
 ./ALstartup.sh</code></pre>
 <p>This starts:</p>
 <ul>
 <li><strong>gui-1</strong> – Web UI for monitoring and data management</li>
 <li><strong>grafana</strong> - Sample Dashboard</li>
-<li><strong>Anylog-Demo-standalone</strong> – Master (control plane)/perator (data operator)/Query (SQL over Anylog"</li>
-<li><strong>Anylog-Demo-operator2</strong> – Second data operator node</li>
+<li><strong>AnyLog-Demo-standalone</strong> – Master (control plane)/perator (data operator)/Query (SQL over AnyLog"</li>
+<li><strong>AnyLog-Demo-operator2</strong> – Second data operator node</li>
 </ul>
-<p class="callout warn" style="margin-top:10px;">Note: After the initial starting of the services, wait several minutes while Anylog services start up.</p>
+<p class="callout warn" style="margin-top:10px;">Note: After the initial starting of the services, wait several minutes while AnyLog services start up.</p>
 </section>
 <section class="card">
-<h2>Anylog CLI</h2>
-<p>To connect to Anylog CLI on the two nodes do the following steps:</p>
-<pre><code>cd ~/Anylog/node/docker-compose</code></pre>
+<h2>AnyLog CLI</h2>
+<p>To connect to AnyLog CLI on the two nodes do the following steps:</p>
+<pre><code>cd ~/AnyLog/node/docker-compose</code></pre>
 <p>Then type:</p>
 <ul>
   <li><code>make attach ANYLOG_TYPE=anylog-standalone</code> to access the query and operator1 CLI</li>
@@ -219,14 +219,14 @@
 <td><a href="http://localhost:3000" rel="noopener" target="_blank">http://localhost:3000</a></td>
 </tr>
 <tr>
-<td><strong>Query Node REST</strong> <span class="pill">Anylog-Demo-standalone</span></td>
+<td><strong>Query Node REST</strong> <span class="pill">AnyLog-Demo-standalone</span></td>
 <td>SQL &amp; Fabric Query</td>
 <td><code>vmipaddr:32149</code></td>
 </tr>
 <tr>
-<td><strong>Operator Node REST</strong> <span class="pill">Anylog-Demo-operator</span></td>
+<td><strong>Operator Node REST</strong> <span class="pill">AnyLog-Demo-operator</span></td>
 <td>Data Ingest / Control</td>
-<td><code>vmmipaddr:32152</code></td>
+<td><code>vmipaddr:32152</code></td>
 </tr>
 <tr>
 </table>
@@ -270,14 +270,14 @@
         </li>
 <li style="margin-top:8px;">
 <strong>Subscribe to a MQTT broker</strong><br/>
-<a href="https://github.com/EdgeLake/Anylog-Demo.github.io/blob/main/docs/commands/background_services.md#subscribe-to-broker" rel="noopener" target="_blank">
-            MQTT Background Services (docs)
+<a href="https://github.com/AnyLog-co/documentation/blob/master/background%20processes.md" rel="noopener" target="_blank">
+            Background Processes (MQTT / Services)
           </a>
 </li>
 <li style="margin-top:8px;">
 <strong>Insert via REST API</strong><br/>
-<a href="https://github.com/EdgeLake/Anylog-Demo.github.io/blob/main/docs/examples/rest_examples.md#put-request" rel="noopener" target="_blank">
-            REST Insert Examples
+<a href="https://github.com/AnyLog-co/documentation/blob/master/using%20rest.md" rel="noopener" target="_blank">
+            Using REST
           </a>
 </li>
 </ol>
@@ -287,10 +287,24 @@
 </section>
 <section class="card">
 <h2>Documentation</h2>
-<ul>
-<li><a href="https://github.com/EdgeLake/Anylog-Demo.github.io/blob/main/docs/getting_started.md" rel="noopener" target="_blank">Getting Started</a></li>
-<li><a href="https://github.com/EdgeLake/Anylog-Demo.github.io/docs/commmands" rel="noopener" target="_blank">Command Reference</a> <span class="pill">external</span></li>
-</ul>
+<div class="grid two" style="margin-top:8px;">
+  <div>
+    <ul>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/getting%20started.md" rel="noopener" target="_blank">Getting Started</a></li>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/cli.md" rel="noopener" target="_blank">CLI Guide</a></li>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/anylog%20commands.md" rel="noopener" target="_blank">Command Reference</a> <span class="pill">official</span></li>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/starting%20an%20anylog%20instance.md" rel="noopener" target="_blank">Starting an AnyLog Instance</a></li>
+    </ul>
+  </div>
+  <div>
+    <ul>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/background%20processes.md" rel="noopener" target="_blank">Background Processes</a></li>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/using%20rest.md" rel="noopener" target="_blank">Using REST</a></li>
+      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/basic%20anylog%20deployment.md" rel="noopener" target="_blank">Basic Deployment</a></li>
+      <li><a href="https://github.com/AnyLog-co/documentation" rel="noopener" target="_blank">Browse Full Documentation Repo</a></li>
+    </ul>
+  </div>
+</div>
 </section>
 <section class="card">
 <h2>Support</h2>
@@ -299,7 +313,7 @@
 <p class="footer">
       Pro tip: keep this page open on first boot. Use <kbd>Ctrl</kbd> + <kbd>L</kbd> to focus the address bar quickly, and <kbd>Alt</kbd> + <kbd>←</kbd> to navigate back.
     </p>
-<section class="card"><h2>Credentials</h2><p>Default demo user credentials (change after first login):</p><ul><li><strong>Username:</strong> Anylog-Demo</li><li><strong>Password:</strong> Anylog-Demo</li></ul><div class="callout warn">Security note: The default password is 'Anylog-Demo'. For production or networked demos, change it immediately.</div></section></div>
+<section class="card"><h2>Credentials</h2><p>Default demo user credentials (change after first login):</p><ul><li><strong>Username:</strong> AnyLog-Demo</li><li><strong>Password:</strong> AnyLog-Demo</li></ul><div class="callout warn">Security note: The default password is 'AnyLog-Demo'. For production or networked demos, change it immediately.</div></section></div>
 <script>
     // Copy-to-clipboard buttons for pre blocks
     document.querySelectorAll('.copy-btn').forEach(btn => {
