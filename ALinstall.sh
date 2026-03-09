@@ -44,6 +44,9 @@ do_install() {
 mkdir -p ~/.config/autostart
 cp startup-readme.desktop ~/.config/autostart/
 
+# create log directory
+  mkdir -p ~/Anylog/logs
+
 #  Install node
   mkdir -p ~/Anylog/node
   cd ~/Anylog/node
