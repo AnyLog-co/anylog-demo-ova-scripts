@@ -30,7 +30,7 @@ apply_env_to_configs() { # BASE_CONFIG_FILE ADVANCE_CONFIG_FILE
   local base_cfg="$1" adv_cfg="$2"
   local skip_keys="TAG|COMPOSE_VER"
   # Keys that belong in advance_configs.env
-  local adv_keys="NIC_TYPE|ENABLE_MQTT|MQTT_BROKER|MSG_DBMS|NODE_MONITORING|STORE_MONITORING|SYSLOG_MONITORING|DOCKER_MONITORING"
+  local adv_keys="NIC_TYPE|ENABLE_MQTT|MQTT_BROKER|MSG_DBMS|NODE_MONITORING|STORE_MONITORING|SYSLOG_MONITORING|DOCKEER_MONITORING"
   while IFS='=' read -r key value || [[ -n "$key" ]]; do
     # Skip blank lines and comments
     [[ -z "$key" || "$key" =~ ^[[:space:]]*# ]] && continue
@@ -45,7 +45,7 @@ apply_env_to_configs() { # BASE_CONFIG_FILE ADVANCE_CONFIG_FILE
     else
       ensure_kv "$key" "$value" "$base_cfg"
     fi
-  done < /home/edgelake/Anylog/ALinstall.env
+  done < ./ALinstall.env
 }
 
 do_install() {
@@ -119,16 +119,15 @@ for NODE_TYPE in anylog-standalone-operator anylog-operator; do
       ensure_kv "NODE_NAME"          "${h}-operator"         "$ENV"
       ensure_kv "LEDGER_CONN"        "${IP_ADDR}:32148"      "$ENV"
       ensure_kv "CLUSTER_NAME"       "${h}-operator-cluster" "$ENV"
+      ensure_kv "REST_BIND"          "false"                  "$ENV"
+      ensure_kv "BROKER_BIND"        "false"                  "$ENV"
       ensure_kv "ANYLOG_SERVER_PORT" "${ANYLOG_SERVER_PORT}"  "$ENV"
       ensure_kv "ANYLOG_REST_PORT"   "${ANYLOG_REST_PORT}"    "$ENV"
       ensure_kv "ANYLOG_BROKER_PORT" "${ANYLOG_BROKER_PORT}"  "$ENV"
       #ensure_kv "ENABLE_EXTERNAL_DNS" "${ENABLE_EXTERNAL_DNS}" "$ENV"
       #ensure_kv "ENABLE_DNS"         "${ENABLE_DNS}"          "$ENV"
       #ensure_kv "DNS_DOMAIN"         "${DNS_DOMAIN}"          "$ENV"
-      ensure_kv "ANYLOG_SERVER_PORT" "32151"		      "$ENV"
-      ensure_kv "ANYLOG_REST_PORT"   "32152"		      "$ENV"
-      ensure_kv "ANYLOG_BROKER_PORT" "32153"		      "$ENV"
-
+      ensure_kv "MONITOR_NODES"      "true"                   "$ENV"
       # Apply all remaining ALinstall.env vars to the config files
       apply_env_to_configs "$ENV" "$AENV"
 
@@ -178,11 +177,20 @@ sudo rm -r ~/Anylog/node
 
 }
 
+do_update() {
+  echo "=== Update: starting uninstall ==="
+  do_uninstall
+  echo "=== Update: uninstall complete, starting install ==="
+  do_install
+  echo "=== Update: complete ==="
+}
+
 case "$1" in
-  install) do_install ;;
+  install)   do_install ;;
   uninstall) do_uninstall ;;
+  update)    do_update ;;
   *)
-    echo "ERROR: Excpected $0 [install,uninstall]" >&2
+    echo "ERROR: Excpected $0 [install,uninstall,update]" >&2
     exit 1
   ;;
 
