@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------
 # Defaults
 # ---------------------------------------------------------------------------
-AL_DIR="$(pwd)
+AL_DIR="$(pwd)"
 ENV_FILE="$AL_DIR/ALinstall.env"
 NODE_LIST_ARG=""
 AUTO_START=false
@@ -75,13 +75,6 @@ log() {
 log "=== ALinstall started: command='${1:-unknown}' env='${ENV_FILE}' nodes='${NODE_LIST[*]}' demo=${DEMO_MODE} ==="
 log "Log file: ${LOG_FILE}"
 
-# ---------------------------------------------------------------------------
-# Load environment variables
-# ---------------------------------------------------------------------------
-[[ -f "$ENV_FILE" ]] || { log "ERROR: Environment file not found: $ENV_FILE"; exit 1; }
-set -a
-# shellcheck source=/dev/null
-source "$ENV_FILE"
 set +a
 
 NIC_TYPE=$(ip route | grep default | awk '{print $5}')
@@ -122,7 +115,6 @@ apply_env_to_configs() { # BASE_CONFIG_FILE
     [[ -z "$key" ]] && continue
     [[ "$key" =~ ^($skip_keys)$ ]] && continue
       ensure_kv "$key" "$value" "$base_cfg"
-    fi
   done < "$ENV_FILE"
 }
 
@@ -168,6 +160,7 @@ do_start() {
 # start sample grafana dashboard
       log "== starting Grafana =="
       sudo docker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32149 --name grafana anylogco/oh-grafana:la
+    done
 
    else
     for NODE_TYPE in "${NODE_LIST[@]}"; do
@@ -175,6 +168,7 @@ do_start() {
       sudo make up ANYLOG_TYPE="${NODE_TYPE}"
       log "Node started: $NODE_TYPE"
     done
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -228,13 +222,13 @@ do_install() {
 
   h="$(hostname)"
  
-if $DEMO_MODE; then
+  if $DEMO_MODE; then
 # --- Demo install: full environment including gui, grafana, extra services ---
 
 # start syslog
-  log "Enabling rsyslog..."
-  sudo systemctl enable rsyslog
-  sudo systemctl start rsyslog
+    log "Enabling rsyslog..."
+    sudo systemctl enable rsyslog
+    sudo systemctl start rsyslog
 
 # Grant non-root user permissions to use docker
 #  USER=`whoami`
@@ -243,131 +237,133 @@ if $DEMO_MODE; then
 #  newgrp docker
 
 # Install startup scripts
-  mkdir -p ~/.config/autostart
-  cp startup-readme.desktop ~/.config/autostart/
+    mkdir -p ~/.config/autostart
+    cp startup-readme.desktop ~/.config/autostart/
 
   # forward syslog to anylog
-  log "Configuring rsyslog forwarding to ${IP_ADDR}:32160..."
-  sudo tee /etc/rsyslog.d/60-custom-forwarding.conf > /dev/null <<EOF
+    log "Configuring rsyslog forwarding to ${IP_ADDR}:32160..."
+    sudo tee /etc/rsyslog.d/60-custom-forwarding.conf > /dev/null <<EOF
 template(name="MyCustomTemplate" type="string" string="<%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag% %msg%\\n")
 *.* action(type="omfwd" target="${IP_ADDR}" port="32160" protocol="tcp" template="MyCustomTemplate")
 EOF
-  sudo systemctl restart rsyslog
+    sudo systemctl restart rsyslog
 
-  for NODE_TYPE in anylog-standalone-operator anylog-operator; do
-    log "Configuring node: $NODE_TYPE"
+    for NODE_TYPE in anylog-standalone-operator anylog-operator; do
+      log "Configuring node: $NODE_TYPE"
 
-      case "$NODE_TYPE" in
-      anylog-standalone-operator)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
+        case "$NODE_TYPE" in
+        anylog-standalone-operator)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$ENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
 
-          ;;
+            ;;
 
-      anylog-operator)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"          "${h}-operator"          "$ENV"
-          ensure_kv "LEDGER_CONN"        "${IP_ADDR}:32148"       "$ENV"
-          ensure_kv "CLUSTER_NAME"       "${h}-operator-cluster"  "$ENV"
-          ensure_kv "ANYLOG_SERVER_PORT" "32158"   		  "$ENV"
-          ensure_kv "ANYLOG_REST_PORT"   "32159"	          "$ENV"
-          ensure_kv "ANYLOG_BROKER_PORT" "32160"    		  "$ENV"
-	  ensure_kv "NIC_TYPE"	   	"${NIC_TYPE}"	          "$ENV"
-	  ensure_kv "LICENSE_KEY"  	 "$NEW_KEY"	          "$ENV"
+        anylog-operator)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"          "${h}-operator"          "$ENV"
+            ensure_kv "LEDGER_CONN"        "${IP_ADDR}:32148"       "$ENV"
+            ensure_kv "CLUSTER_NAME"       "${h}-operator-cluster"  "$ENV"
+            ensure_kv "ANYLOG_SERVER_PORT" "32158"   		  "$ENV"
+            ensure_kv "ANYLOG_REST_PORT"   "32159"	          "$ENV"
+            ensure_kv "ANYLOG_BROKER_PORT" "32160"    		  "$ENV"
+	    ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	  "$ENV"
+	    ensure_kv "LICENSE_KEY"  	 "$NEW_KEY"	          "$ENV"
 
-          ;;
+            ;;
 
-      *)
-          log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}' in demo install."
-          exit 1
-          ;;
-      esac
+        *)
+            log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}' in demo install."
+            exit 1
+            ;;
+        esac
+      done
 
     else
       # --- Standard install: configure only the requested node ---
-      case "$NODE_TYPE" in
-      anylog-generic)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
+      for node in "${NODE_LIST[@]}"; do
+        case "$NODE_TYPE" in
+        anylog-generic)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+            ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
+  	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            ;;
+
+        anylog-master)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-master"              "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            ;;
+
+        anylog-operator)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-operator"            "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster"  "$ENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            ;;
+
+        anylog-pulisher)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-publisher"           "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+            ensure_kv "CLUSTER_NAME" "${h}-cluster"             "$ENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"              "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            ;;
+
+        anylog-query)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-query"               "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+  	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
           ;;
 
-      anylog-master)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-master"              "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
-          ;;
+        anylog-standalone-operator)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone-operator" "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$ENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            ;;
 
-      anylog-operator)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-operator"            "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster"  "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
-          ;;
+        anylog-standalone-publisher)
+            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
+            apply_env_to_configs "$ENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone-publisher"          "$ENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"                   "$ENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster"  "$ENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	                  "$ENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		                  "$ENV"
+            ;;
 
-      anylog-pulisher)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-publisher"           "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-          ensure_kv "CLUSTER_NAME" "${h}-cluster"  "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
-          ;;
+          *)
+            log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}'."
+            exit 1
+            ;;
+        esac
 
-      anylog-query)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-query"               "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
-          ;;
-
-      anylog-standalone-operator)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-standalone-operator" "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
-          ;;
-
-      anylog-standalone-publisher)
-          ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-          apply_env_to_configs "$ENV" 
-          ensure_kv "NODE_NAME"    "${h}-standalone-publisher"          "$ENV"
-          ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"                   "$ENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster"  "$ENV"
-	  ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	      "$ENV"
-	  ensure_kv "LICENSE_KEY"  "$NEW_KEY"		      "$ENV"
-          ;;
-
-      *)
-          log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}'."
-          exit 1
-          ;;
-      esac
-    fi
-
-    log "Node configured: $NODE_TYPE"
-  done
+     log "Node configured: $NODE_TYPE"
+   done
+ fi
 
   if $AUTO_START; then
     log "=== Auto-start: launching nodes ==="
@@ -490,6 +486,7 @@ if [ -z "$CURRENT_KEY" ]; then
         echo "No key entered. Exiting."
         exit 1
     fi
+fi
 
 # Replace LICENSE_KEY="" with new key
 sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$ENV_FILE"
