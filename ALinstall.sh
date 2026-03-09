@@ -151,7 +151,7 @@ for NODE_TYPE in anylog-standalone-operator anylog-operator; do
     sudo make clean ANYLOG_TYPE="${NODE_TYPE}"
     sudo docker kill gui-1
     sudo docker rm gui-1
-    sudo docker rmi anylogco/remote-gui:beta
+    sudo docker rmi anylogco/remote-gui:beta2
     sudo docker kill grafana
     sudo docker rm grafana
     sudo docker rmi anylogco/oh-grafana:latest
