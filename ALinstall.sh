@@ -45,7 +45,7 @@ apply_env_to_configs() { # BASE_CONFIG_FILE ADVANCE_CONFIG_FILE
     else
       ensure_kv "$key" "$value" "$base_cfg"
     fi
-  done < ./ALinstall.env
+  done < /home/edgelake/Anylog/ALinstall.env
 }
 
 do_install() {
