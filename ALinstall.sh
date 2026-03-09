@@ -3,7 +3,8 @@
 # ---------------------------------------------------------------------------
 # Defaults
 # ---------------------------------------------------------------------------
-ENV_FILE="./ALinstall.env"
+AL_DIR="$(pwd)
+ENV_FILE="$AL_DIR/ALinstall.env"
 NODE_LIST_ARG=""
 AUTO_START=false
 AUTO_STOP=false
@@ -60,7 +61,7 @@ fi
 # Captures all output (stdout + stderr) to log file while still printing to
 # the terminal. Set up after arg parsing so $1 (command) is available.
 # ---------------------------------------------------------------------------
-LOG_DIR="./logs"
+LOG_DIR="$AL_DIR/logs"
 mkdir -p "$LOG_DIR"
 LOG_FILE="${LOG_DIR}/ALinstall_${1:-unknown}_$(date '+%Y%m%d_%H%M%S').log"
 
@@ -153,7 +154,7 @@ get_running_anylog_nodes() {
 # START — runs 'make up' for each node in NODE_LIST
 # ---------------------------------------------------------------------------
 do_start() {
-  cd ~/Anylog/node/docker-compose
+  cd $AL_DIR/node/docker-compose
   if $DEMO_MODE; then
     for NODE_TYPE in anylog-standalone-operator anylog-operator"; do
       log "Starting node: $NODE_TYPE"
@@ -180,7 +181,7 @@ do_start() {
 # STOP — runs 'make down' for each running node in NODE_LIST
 # ---------------------------------------------------------------------------
 do_stop() {
-  cd ~/Anylog/node/docker-compose
+  cd $AL_DIR/node/docker-compose
 
   mapfile -t RUNNING_NODES < <(get_running_anylog_nodes)
 
@@ -205,9 +206,6 @@ do_stop() {
 do_install() {
   set -e
 
-# create log directory
-  mkdir -p ~/Anylog/logs
-
   log "=== Install started (demo=${DEMO_MODE}) ==="
 
 # If docker, docker-compose and make are already installed via APT or another method, you can skip this step.
@@ -217,8 +215,8 @@ do_install() {
 
 # Install node
   log "Cloning docker-compose repo (branch: ${COMPOSE_VER})..."
-  mkdir -p ~/Anylog/node
-  cd ~/Anylog/node
+  mkdir -p $AL_DIR/node
+  cd $AL_DIR/node
   git clone -b "${COMPOSE_VER}" https://github.com/anylog-co/docker-compose
   cd docker-compose
   docker login -u anyloguser -p dckr_pat_tWYofE1Jx68FXXE9kisQONXE2Sw
@@ -389,7 +387,7 @@ EOF
 do_uninstall() {
   log "=== Uninstall running nodes (demo=${DEMO_MODE}) ==="
 
-  cd ~/Anylog/node/docker-compose
+  cd $AL_DIR/node/docker-compose
 
   # Narrow the target list to nodes actually running in Docker
   mapfile -t RUNNING_NODES < <(get_running_anylog_nodes)
@@ -447,7 +445,7 @@ do_uninstall() {
     log "Node uninstalled: $NODE_TYPE"
   done
 
-  sudo rm -rf ~/Anylog/node
+  sudo rm -rf $AL_DIR/node
   log "=== Uninstall complete ==="
 }
 
