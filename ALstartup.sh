@@ -51,7 +51,7 @@ fi
 cd ~/Anylog/node/docker-compose
 sudo make up ANYLOG_TYPE=anylog-standalone-operator
 sudo make up ANYLOG_TYPE=anylog-operator
-sudo docker run -it -d -p 3001:3001 -p 8000:8000 --restart unless-stopped -e REACT_APP_API_URL=http://"$IP_ADDR":8000 --name gui-1 anylogco/remote-gui:beta
+sudo docker run -it -d -p 31800:31800 -p 8080:8080 --restart unless-stopped -e REACT_APP_API_URL=http://"$IP_ADDR":8080 --name gui-1 anylogco/remote-gui:beta2
 
 # start sample grafana dashboard
 sudo docker run -it -d -p 3000:3000 --restart unless-stopped -e DATASOURCE_URL=http://"$IP_ADDR":32149 --name grafana anylogco/oh-grafana:latest

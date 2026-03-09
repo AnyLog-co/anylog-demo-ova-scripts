@@ -11,14 +11,14 @@ echo "--------------------------------------" >> "$LOGFILE"
 echo "AnyLog startup triggered: $(date)" >> "$LOGFILE"
 
 # Wait for desktop environment to finish loading
-sleep 5
+sleep 8
 
 # Start AnyLog
 echo "Starting AnyLog..." >> "$LOGFILE"
-"sudo ANYLOG_HOME/ALstartup.sh" >> "$LOGFILE" 2>&1 &
+$ANYLOG_HOME/ALstartup.sh >> "$LOGFILE" 2>&1 &
 
 # Open documentation
 echo "Opening README..." >> "$LOGFILE"
-xdg-open "$ANYLOG_HOME/README.html" >> "$LOGFILE" 2>&1 &
+xdg-open $ANYLOG_HOME/README.html >> "$LOGFILE" 2>&1 &
 
 echo "Startup script finished: $(date)" >> "$LOGFILE"
