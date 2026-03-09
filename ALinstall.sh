@@ -23,10 +23,35 @@ ensure_kv() { # KEY VALUE FILE
   fi
 }
 
+# Apply all ALinstall.env variables (except TAG and COMPOSE_VER) to the node config files.
+# Advance-config keys are written to AENV; all others go to base ENV.
+# Node-specific overrides set before this call are NOT re-applied here — they are already correct.
+apply_env_to_configs() { # BASE_CONFIG_FILE ADVANCE_CONFIG_FILE
+  local base_cfg="$1" adv_cfg="$2"
+  local skip_keys="TAG|COMPOSE_VER"
+  # Keys that belong in advance_configs.env
+  local adv_keys="NIC_TYPE|ENABLE_MQTT|MQTT_BROKER|MSG_DBMS|NODE_MONITORING|STORE_MONITORING|SYSLOG_MONITORING|DOCKER_MONITORING"
+  while IFS='=' read -r key value || [[ -n "$key" ]]; do
+    # Skip blank lines and comments
+    [[ -z "$key" || "$key" =~ ^[[:space:]]*# ]] && continue
+    # Strip whitespace from key
+    key="${key//[[:space:]]/}"
+    [[ -z "$key" ]] && continue
+    # Skip TAG and COMPOSE_VER
+    [[ "$key" =~ ^($skip_keys)$ ]] && continue
+    # Route to advance or base config
+    if [[ "$key" =~ ^($adv_keys)$ ]]; then
+      ensure_kv "$key" "$value" "$adv_cfg"
+    else
+      ensure_kv "$key" "$value" "$base_cfg"
+    fi
+  done < ./ALinstall.env
+}
+
 do_install() {
   set -e
 
-# If docker, docker-compose and make are already installed via APT or another method, you can skip this step.\
+# If docker, docker-compose and make are already installed via APT or another method, you can skip this step.
   sudo snap install docker
   sudo apt-get -y install make gettext rsyslog
 
@@ -50,8 +75,7 @@ cp startup-readme.desktop ~/.config/autostart/
 #  Install node
   mkdir -p ~/Anylog/node
   cd ~/Anylog/node
-  git clone -b pre-develop https://github.com/anylog-co/docker-compose
-#  git clone -b os-dev https://github.com/anylog-co/docker-compose
+  git clone -b "${COMPOSE_VER}" https://github.com/anylog-co/docker-compose
   cd docker-compose
   docker login -u anyloguser -p dckr_pat_tWYofE1Jx68FXXE9kisQONXE2Sw  
 
@@ -75,57 +99,38 @@ for NODE_TYPE in anylog-standalone-operator anylog-operator; do
   anylog-standalone-operator)
       ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
       AENV="docker-makefiles/${NODE_TYPE}/advance_configs.env"
-      ensure_kv "NODE_NAME"     "${h}-standalone"        "$ENV"
-      ensure_kv "COMPANY_NAME"  "${COMPANY_NAME}"        "$ENV"
-      ensure_kv "LICENSE_KEY"   "\"${LICENSE_KEY}\""     "$ENV"
-      ensure_kv "LEDGER_CONN"   "${IP_ADDR}:32148"       "$ENV"
-      ensure_kv "TCP_BIND"      "${TCP_BIND}"            "$ENV"
+      # Node-specific keys that cannot be derived from ALinstall.env directly
+      ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
+      ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
+      ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster"  "$ENV"
       #ensure_kv "ENABLE_EXTERNAL_DNS" "${ENABLE_EXTERNAL_DNS}" "$ENV"
-      #ensure_kv "ENABLE_DNS"   "${ENABLE_DNS}"          "$ENV"
-      #ensure_kv "DNS_DOMAIN"   "${DNS_DOMAIN}"          "$ENV"
-      ensure_kv "DEFAULT_DBMS"  "new_company"            "$ENV"
-      ensure_kv "REST_BIND"     "${REST_BIND}"           "$ENV"
-      ensure_kv "BROKER_BIND"   "${BROKER_BIND}"         "$ENV"
-      ensure_kv "NIC_TYPE"      "${NIC_TYPE}"            "$AENV"
-      ensure_kv "CLUSTER_NAME"  "${h}-standalone-cluster"  "$ENV"
-      ensure_kv "ENABLE_MQTT"   "true"                   "$AENV"
-      ensure_kv "MQTT_BROKER"   "172.104.228.251"        "$AENV"
-      ensure_kv "MSG_DBMS"      "new_company"            "$AENV"
-      ensure_kv "NODE_MONITORING" "true"                 "$AENV"
-      ensure_kv "STORE_MONITORING" "true"                "$AENV"
-      ensure_kv "SYSLOG_MONITORING" "true"               "$AENV"
-      ensure_kv "DOCKEER_MONITORING" "true"              "$AENV"
-      
+      #ensure_kv "ENABLE_DNS"  "${ENABLE_DNS}"             "$ENV"
+      #ensure_kv "DNS_DOMAIN"  "${DNS_DOMAIN}"             "$ENV"
+      # Apply all remaining ALinstall.env vars to the config files
+      apply_env_to_configs "$ENV" "$AENV"
+
       #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
 
   anylog-operator)
       ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
       AENV="docker-makefiles/${NODE_TYPE}/advance_configs.env"
-      ensure_kv "NODE_NAME"     "${h}-operator"          "$ENV"
-      ensure_kv "COMPANY_NAME"  "${COMPANY_NAME}"        "$ENV"
-      ensure_kv "LEDGER_CONN"   "${IP_ADDR}:32148"       "$ENV"
-      ensure_kv "LICENSE_KEY"   "\"${LICENSE_KEY}\""     "$ENV"
-      ensure_kv "TCP_BIND"      "${TCP_BIND}"            "$ENV"
+      # Node-specific keys — operator uses different ports and disables REST/broker binds
+      ensure_kv "NODE_NAME"          "${h}-operator"         "$ENV"
+      ensure_kv "LEDGER_CONN"        "${IP_ADDR}:32148"      "$ENV"
+      ensure_kv "CLUSTER_NAME"       "${h}-operator-cluster" "$ENV"
+      ensure_kv "ANYLOG_SERVER_PORT" "${ANYLOG_SERVER_PORT}"  "$ENV"
+      ensure_kv "ANYLOG_REST_PORT"   "${ANYLOG_REST_PORT}"    "$ENV"
+      ensure_kv "ANYLOG_BROKER_PORT" "${ANYLOG_BROKER_PORT}"  "$ENV"
       #ensure_kv "ENABLE_EXTERNAL_DNS" "${ENABLE_EXTERNAL_DNS}" "$ENV"
-      #ensure_kv "ENABLE_DNS"    "${ENABLE_DNS}"          "$ENV"
-      #ensure_kv "DNS_DOMAIN"    "${DNS_DOMAIN}"          "$ENV"
-      ensure_kv "DEFAULT_DBMS"  "new_company"            "$ENV"
-      ensure_kv "REST_BIND"     "false"                  "$ENV"
-      ensure_kv "BROKER_BIND"   "false"                  "$ENV"
-      ensure_kv "ANYLOG_SERVER_PORT" "32151"             "$ENV"
-      ensure_kv "ANYLOG_REST_PORT" "32152"               "$ENV"
-      ensure_kv "ANYLOG_BROKER_PORT" "32153"             "$ENV"
-      ensure_kv "NIC_TYPE"      "${NIC_TYPE}"            "$AENV"
-      ensure_kv "CLUSTER_NAME"  "${h}-operator-cluster"  "$ENV"
-      ensure_kv "ENABLE_MQTT"   "true"                   "$AENV"
-      ensure_kv "MQTT_BROKER"   "172.104.228.251"        "$AENV"
-      ensure_kv "MSG_DBMS"      "new_company"            "$AENV"
-      ensure_kv "MONITOR_NODES" "true"                   "$ENV"
-      ensure_kv "NODE_MONITORING" "true"                 "$AENV"
-      ensure_kv "STORE_MONITORING" "true"                "$AENV"
-      ensure_kv "SYSLOG_MONITORING" "true"               "$AENV"
-      ensure_kv "DOCKEER_MONITORING" "true"              "$AENV"
+      #ensure_kv "ENABLE_DNS"         "${ENABLE_DNS}"          "$ENV"
+      #ensure_kv "DNS_DOMAIN"         "${DNS_DOMAIN}"          "$ENV"
+      ensure_kv "ANYLOG_SERVER_PORT" "32151"		      "$ENV"
+      ensure_kv "ANYLOG_REST_PORT"   "32152"		      "$ENV"
+      ensure_kv "ANYLOG_BROKER_PORT" "32153"		      "$ENV"
+
+      # Apply all remaining ALinstall.env vars to the config files
+      apply_env_to_configs "$ENV" "$AENV"
 
       #make up ANYLOG_TYPE="${NODE_TYPE}"
       ;;
