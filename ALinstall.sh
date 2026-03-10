@@ -78,6 +78,26 @@ log "=== ALinstall started: command='${1:-unknown}' env='${ENV_FILE}' nodes='${N
 log "Log file: ${LOG_FILE}"
 
 # ---------------------------------------------------------------------------
+# Replace KEY=... if present, otherwise append KEY=VALUE
+# ---------------------------------------------------------------------------
+ensure_kv() { # KEY VALUE FILE
+  local k="$1" v="$2" f="$3"
+  [[ -f "$f" ]] || : > "$f"
+  if grep -qE "^${k}=" "$f"; then
+    sedi "s|^${k}=.*$|${k}=${v}|" "$f"
+  else
+    printf '\n%s=%s\n' "$k" "$v" >> "$f"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Cross-platform in-place sed (GNU/BSD)
+# ---------------------------------------------------------------------------
+sedi() { # usage: sedi 's|^KEY=.*$|KEY=VALUE|' file
+  if sed --version &>/dev/null; then sed -i "$1" "$2"; else sed -i '' "$1" "$2"; fi
+}
+
+# ---------------------------------------------------------------------------
 # Load environment variables
 # ---------------------------------------------------------------------------
 [[ -f "$ENV_FILE" ]] || { log "ERROR: Environment file not found: $ENV_FILE"; exit 1; }
@@ -117,27 +137,7 @@ if [ -z "$CURRENT_KEY" ]; then
 fi
 
 # Replace LICENSE_KEY="" with new key
-sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$ENV_FILE"
-
-# ---------------------------------------------------------------------------
-# Cross-platform in-place sed (GNU/BSD)
-# ---------------------------------------------------------------------------
-sedi() { # usage: sedi 's|^KEY=.*$|KEY=VALUE|' file
-  if sed --version &>/dev/null; then sed -i "$1" "$2"; else sed -i '' "$1" "$2"; fi
-}
-
-# ---------------------------------------------------------------------------
-# Replace KEY=... if present, otherwise append KEY=VALUE
-# ---------------------------------------------------------------------------
-ensure_kv() { # KEY VALUE FILE
-  local k="$1" v="$2" f="$3"
-  [[ -f "$f" ]] || : > "$f"
-  if grep -qE "^${k}=" "$f"; then
-    sedi "s|^${k}=.*$|${k}=${v}|" "$f"
-  else
-    printf '\n%s=%s\n' "$k" "$v" >> "$f"
-  fi
-}
+ensure_kv "LICENSE_KEY" "$NEW_KEY" "$ENV_FILE"
 
 # ---------------------------------------------------------------------------
 # Apply all env-file variables (except TAG and COMPOSE_VER) to node config files.
@@ -163,9 +163,9 @@ get_running_anylog_nodes() {
   local running_containers
   running_containers=$(docker ps --format '{{.Names}}' 2>/dev/null)
   if $DEMO_MODE; then
-    for NODE_TYPE in anylog-standalone-operator anylog-operator gui-1 grafana"; do
-      if echo "$running_containers" | grep -q "${node}"; then
-        echo "$node"
+    for NODE_TYPE in anylog-standalone-operator anylog-operator gui-1 grafana; do
+      if echo "$running_containers" | grep -q "${NODE_TYPE}"; then
+        echo "$NODE_TYPE"
       fi
     done
 
@@ -185,7 +185,7 @@ get_running_anylog_nodes() {
 do_start() {
   cd $AL_DIR/node/docker-compose
   if $DEMO_MODE; then
-    for NODE_TYPE in anylog-standalone-operator anylog-operator"; do
+    for NODE_TYPE in anylog-standalone-operator anylog-operator; do
       log "Starting node: $NODE_TYPE"
       sudo make up ANYLOG_TYPE="${NODE_TYPE}"
       log "Node started: $NODE_TYPE"
@@ -275,7 +275,7 @@ do_install() {
 
 # Install startup scripts
     mkdir -p ~/.config/autostart
-    cp startup-readme.desktop ~/.config/autostart/
+    cp $AL_DIR/startup-readme.desktop ~/.config/autostart/
 
   # forward syslog to anylog
     log "Configuring rsyslog forwarding to ${IP_ADDR}:32160..."
@@ -323,7 +323,7 @@ EOF
 
     else
       # --- Standard install: configure only the requested node ---
-      for node in "${NODE_LIST[@]}"; do
+      for NODE_TYPE in "${NODE_LIST[@]}"; do
         case "$NODE_TYPE" in
         anylog-generic)
             ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
@@ -353,7 +353,7 @@ EOF
 	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
             ;;
 
-        anylog-pulisher)
+        anylog-publisher)
             ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
             apply_env_to_configs "$ENV" 
             ensure_kv "NODE_NAME"    "${h}-publisher"           "$ENV"
