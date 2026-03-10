@@ -323,7 +323,7 @@ docker ps
 Restart services:
 
 ```bash
-./ALstartup.sh
+./ALinstall.sh -d -s
 ```
 
 Reinstall:
