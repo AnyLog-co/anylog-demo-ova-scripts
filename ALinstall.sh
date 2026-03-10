@@ -141,9 +141,8 @@ ensure_kv "LICENSE_KEY" "$NEW_KEY" "$ENV_FILE"
 
 # ---------------------------------------------------------------------------
 # Apply all env-file variables (except TAG and COMPOSE_VER) to node config files.
-# Advance-config keys are written to AENV; all others go to base ENV.
 # ---------------------------------------------------------------------------
-apply_env_to_configs() { # BASE_CONFIG_FILE 
+apply_env_to_configs() { # NODE_CONFIG_FILE 
   local base_cfg="$1" 
   local skip_keys="TAG|COMPOSE_VER"
   while IFS='=' read -r key value || [[ -n "$key" ]]; do
@@ -290,27 +289,27 @@ EOF
 
         case "$NODE_TYPE" in
         anylog-standalone-operator)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-            ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$ENV"
-	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone"          "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$NENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
 
             ;;
 
         anylog-operator)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"          "${h}-operator"          "$ENV"
-            ensure_kv "LEDGER_CONN"        "${IP_ADDR}:32148"       "$ENV"
-            ensure_kv "CLUSTER_NAME"       "${h}-operator-cluster"  "$ENV"
-            ensure_kv "ANYLOG_SERVER_PORT" "32158"   		  "$ENV"
-            ensure_kv "ANYLOG_REST_PORT"   "32159"	          "$ENV"
-            ensure_kv "ANYLOG_BROKER_PORT" "32160"    		  "$ENV"
-	    ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	  "$ENV"
-	    ensure_kv "LICENSE_KEY"  	 "$NEW_KEY"	          "$ENV"
+            ENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"          "${h}-operator"          "$NENV"
+            ensure_kv "LEDGER_CONN"        "${IP_ADDR}:32148"       "$NENV"
+            ensure_kv "CLUSTER_NAME"       "${h}-operator-cluster"  "$NENV"
+            ensure_kv "ANYLOG_SERVER_PORT" "32158"   		    "$NENV"
+            ensure_kv "ANYLOG_REST_PORT"   "32159"	            "$NENV"
+            ensure_kv "ANYLOG_BROKER_PORT" "32160"    		    "$NENV"
+	    ensure_kv "NIC_TYPE"	   "${NIC_TYPE}"	    "$NENV"
+	    ensure_kv "LICENSE_KEY"  	   "$NEW_KEY"	            "$NENV"
 
             ;;
 
@@ -326,70 +325,70 @@ EOF
       for NODE_TYPE in "${NODE_LIST[@]}"; do
         case "$NODE_TYPE" in
         anylog-generic)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-standalone"          "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-            ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
-  	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone"          "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+            ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$NENV"
+  	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
             ;;
 
         anylog-master)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-master"              "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-master"              "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
             ;;
 
         anylog-operator)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-operator"            "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-            ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster"  "$ENV"
-	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-operator"            "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster"  "$NENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
             ;;
 
         anylog-publisher)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-publisher"           "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-            ensure_kv "CLUSTER_NAME" "${h}-cluster"             "$ENV"
-	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"              "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-publisher"           "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+            ensure_kv "CLUSTER_NAME" "${h}-cluster"             "$NENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"              "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
             ;;
 
         anylog-query)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-query"               "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-  	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
-          ;;
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-query"               "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+  	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
+            ;;
 
         anylog-standalone-operator)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-standalone-operator" "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$ENV"
-            ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$ENV"
-	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone-operator" "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"         "$NENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster"  "$NENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	        "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		        "$NENV"
             ;;
 
         anylog-standalone-publisher)
-            ENV="docker-makefiles/${NODE_TYPE}/base_configs.env"
-            apply_env_to_configs "$ENV" 
-            ensure_kv "NODE_NAME"    "${h}-standalone-publisher"          "$ENV"
-            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"                   "$ENV"
-            ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster"  "$ENV"
-	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	                  "$ENV"
-	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		                  "$ENV"
+            NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
+            apply_env_to_configs "$NENV" 
+            ensure_kv "NODE_NAME"    "${h}-standalone-publisher" "$NENV"
+            ensure_kv "LEDGER_CONN"  "${IP_ADDR}:32148"          "$NENV"
+            ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster"  "$NENV"
+	    ensure_kv "NIC_TYPE"     "${NIC_TYPE}"	         "$NENV"
+	    ensure_kv "LICENSE_KEY"  "$NEW_KEY"		         "$NENV"
             ;;
 
           *)
