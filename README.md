@@ -115,7 +115,6 @@ Ports:
 
 ```bash
 chmod +x ALinstall.sh
-chmod +x ALstartup.sh
 chmod +x startup.sh
 ```
 
@@ -245,7 +244,7 @@ Containers auto-start on OVA boot.
 
 ```bash
 cd ~/AnyLog
-./ALstartup.sh
+./ALinstallsh -s -n node1,node2
 ```
 
 Verify running services:
@@ -266,6 +265,7 @@ docker ps
 | Query Node | VM_IP:32349 |
 | Operator 1 | VM_IP:32149 |
 | Operator 2 | VM_IP:32159 |
+| Standalone Operator | VM_IP:32149 |
 
 ---
 
