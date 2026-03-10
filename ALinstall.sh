@@ -11,6 +11,8 @@ AUTO_STOP=false
 DEMO_MODE=false
 VALID_NODES="anylog-generic anylog-master anylog-operator anylog-query anylog-publisher anylog-standalone-operator anylog-standalone-publisher"
 
+
+
 # ---------------------------------------------------------------------------
 # Argument parsing — flags must precede the command verb
 # Usage: ALinstall.sh [-e env_file] [-n node1,node2,...] [-s] [-k] [-d] install|uninstall|update|start|stop
@@ -75,12 +77,47 @@ log() {
 log "=== ALinstall started: command='${1:-unknown}' env='${ENV_FILE}' nodes='${NODE_LIST[*]}' demo=${DEMO_MODE} ==="
 log "Log file: ${LOG_FILE}"
 
+# ---------------------------------------------------------------------------
+# Load environment variables
+# ---------------------------------------------------------------------------
+[[ -f "$ENV_FILE" ]] || { log "ERROR: Environment file not found: $ENV_FILE"; exit 1; }
+set -a
+# shellcheck source=/dev/null
+source "$ENV_FILE"
 set +a
 
 NIC_TYPE=$(ip route | grep default | awk '{print $5}')
 IP_ADDR=$(ip -4 addr show "$NIC_TYPE" | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 
 log "Detected NIC: ${NIC_TYPE}  IP: ${IP_ADDR}"
+
+# Extract current LICENSE_KEY value
+CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | cut -d '"' -f2)
+
+# If variable not found
+if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
+    log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
+    echo "LICENSE_KEY variable not found in $ENV_FILE"
+    exit 1 
+fi
+
+# If blank �~F~R prompt user
+if [ -z "$CURRENT_KEY" ]; then
+    log "== Adding new license key =="
+    echo "LICENSE_KEY is currently blank."
+    echo "You can request a new license key at https://www.anylog.network/download"
+    read -p "Please enter your new LICENSE_KEY: " NEW_KEY
+
+    # Ensure user entered something
+    if [ -z "$NEW_KEY" ]; then
+        log "== No new key entered.  Exiting =="
+        echo "No key entered. Exiting."
+        exit 1
+    fi
+fi
+
+# Replace LICENSE_KEY="" with new key
+sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$ENV_FILE"
 
 # ---------------------------------------------------------------------------
 # Cross-platform in-place sed (GNU/BSD)
@@ -454,42 +491,6 @@ do_update() {
   do_install
   log "=== Update complete ==="
 }
-
-# check to see if ENV_FILE exists
-log "== Checking .env file =="
-if [ ! -f "$ENV_FILE" ]; then
-    log "== .env file $ENV_FILE doesn't exist...exiting =="
-    echo "Error: $ENV_FILE not found."
-    exit 1
-fi
-
-# Extract current LICENSE_KEY value
-CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | cut -d '"' -f2)
-
-# If variable not found
-if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
-    log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
-    echo "LICENSE_KEY variable not found in $ENV_FILE"
-    exit 1
-fi
-
-# If blank → prompt user
-if [ -z "$CURRENT_KEY" ]; then
-    log "== Adding new license key =="
-    echo "LICENSE_KEY is currently blank."
-    echo "You can request a new license key at https://www.anylog.network/download"
-    read -p "Please enter your new LICENSE_KEY: " NEW_KEY
-
-    # Ensure user entered something
-    if [ -z "$NEW_KEY" ]; then
-        log "== No new key entered.  Exiting =="
-        echo "No key entered. Exiting."
-        exit 1
-    fi
-fi
-
-# Replace LICENSE_KEY="" with new key
-sed -i "s|^LICENSE_KEY=\"\"|LICENSE_KEY=\"$NEW_KEY\"|" "$ENV_FILE"
 
 # ---------------------------------------------------------------------------
 # Command dispatch
