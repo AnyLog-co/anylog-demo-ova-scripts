@@ -302,8 +302,8 @@ Preloaded via MQTT feed on first launch.
 Default credentials:
 
 ```
-Username: anylog
-Password: anylog
+Username: edgelake
+Password: edgelake
 ```
 
 ⚠ Change immediately for non-demo or networked deployments.
