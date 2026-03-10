@@ -244,7 +244,7 @@ Containers auto-start on OVA boot.
 
 ```bash
 cd ~/AnyLog
-./ALinstallsh -s -n node1,node2
+./ALinstall.sh -s -d 
 ```
 
 Verify running services:
