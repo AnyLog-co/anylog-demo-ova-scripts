@@ -30,9 +30,8 @@
 The AnyLog Demo OVA provides a pre-configured distributed data fabric including:
 
 - GUI Management Interface  
-- Query Node (SQL Federation)  
-- Master Node (Control Plane & Metadata Node - blockchain emulator with Operator)  
-- Two Operator Nodes (Data Ingest & Storage)  
+- Standalone Node (Control Plane, SQL Federation and Data Ingest and Storage)  
+- Operator Node (Data Ingest & Storage)  
 - Grafana Monitoring Dashboard  
 
 Designed for:
@@ -47,26 +46,17 @@ Designed for:
 # 🏗 Architecture
 
 ```
-                     ┌─────────────────────────┐
-                     │        GUI (31800)       │
-                     │   Web Management UI     │
-                     └────────────┬────────────┘
-                                  │ REST
-        ┌─────────────────────────┴─────────────────────────┐
-        │                                                   │
-┌───────────────┐                               ┌────────────────┐
-│   Operator Node  │                               │  Standalone Node                    │
-│   (Port 32159)   │                               │  Control Plane, Query and Operator  │
-└───────┬───────┘                               └────────────────┘
-        │
-        │ Distributed SQL
-        │
- ┌──────┴───────────────┐
- │                      │
-┌──────────────┐  ┌──────────────┐
-│ Operator 1   │  │ Operator 2   │
-│ (32149)      │  │ (32159)      │
-└──────────────┘  └──────────────┘
+                          ┌───────────────────────────┐
+                          │        GUI (31800)        │
+                          │     Web Management UI     │
+                          └─────────────┬─────────────┘
+                                        │ REST
+               ┌────────────────────────┴────────────────────────┐
+               │                                                 │
+  ┌────────────────────────┐               ┌─────────────────────────────────────┐
+  │      Operator Node     │               │          Standalone Node            │
+  │       Port 32159       │               │  Control Plane, Query and Operator  │
+  └────────────────────────┘               └─────────────────────────────────────┘
 ```
 
 ---
@@ -94,14 +84,10 @@ URL:
 
 ---
 
-## Master Node
+## Standalone Node
 - Cluster coordination
 - Node discovery & registration
 - Metadata orchestration
-
----
-
-## Query Node
 - Executes distributed SQL queries
 - REST-based query endpoint
 - Aggregates operator results
@@ -111,7 +97,7 @@ Port:
 
 ---
 
-## Operator Nodes 
+## Operator Node
 - Data ingestion endpoints
 - Storage layer
 - MQTT subscription support
@@ -270,14 +256,16 @@ docker ps
 
 ---
 
-# 🌐 Service Endpoints
+# 🌐 Generic Service Endpoints
 
 | Service | URL / Port |
 |----------|------------|
 | GUI | http://localhost:31800 |
 | Grafana | http://localhost:3000 |
-| Standalone  | VM_IP:32149 |
-| Operator  | VM_IP:32159 |
+| Master Node | VM_IP:32049 |
+| Query Node | VM_IP:32349 |
+| Operator 1 | VM_IP:32149 |
+| Operator 2 | VM_IP:32159 |
 
 ---
 
@@ -314,8 +302,8 @@ Preloaded via MQTT feed on first launch.
 Default credentials:
 
 ```
-Username: edgelake
-Password: edgelake
+Username: anylog
+Password: anylog
 ```
 
 ⚠ Change immediately for non-demo or networked deployments.
