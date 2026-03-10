@@ -329,7 +329,15 @@ Restart services:
 Reinstall:
 
 ```bash
-./ALinstall.sh
+./ALinstall.sh uninstall
+./ALinstall.sh -d -s install
+```
+
+Upgrade:
+
+```bash
+Edit ALinstall.env and change TAG to the version of Anylog you want to upgrade to
+./ALinstall.sh -d -s upgrade
 ```
 
 View logs:
