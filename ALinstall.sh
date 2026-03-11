@@ -399,7 +399,7 @@ fi
 LOG_DIR="$AL_DIR/logs"
 mkdir -p "$LOG_DIR"
 LOG_FILE="${LOG_DIR}/ALinstall_${1:-unknown}_$(date '+%Y%m%d_%H%M%S').log"
-exec >> "$LOG_FILE" 2>&1
+exec > >(tee -a "$LOG_FILE") 2>&1
 
 log "=== ALinstall started: OS=${OS_TYPE} command='${1:-unknown}' env='${ENV_FILE}' nodes='${NODE_LIST}' demo=${DEMO_MODE} ==="
 log "Log file: ${LOG_FILE}"
@@ -715,12 +715,17 @@ do_uninstall() {
     fi
   fi
 
-  RUNNING_NODES=$(get_running_anylog_nodes)
-  if [ -z "$RUNNING_NODES" ]; then
-    log "No running AnyLog nodes found matching: ${NODE_LIST} — nothing to uninstall via make clean."
+  if [ "$DEMO_MODE" = true ]; then
+    TARGET_NODES="anylog-standalone-operator anylog-operator grafana"
   else
-    log "Nodes to uninstall: $(printf '%s ' $RUNNING_NODES)"
-    printf '%s\n' "$RUNNING_NODES" | while IFS= read -r NODE_TYPE; do
+    TARGET_NODES="$NODE_LIST"
+  fi
+
+  if [ -z "$TARGET_NODES" ]; then
+    log "No AnyLog nodes specified for uninstall."
+  else
+    log "Nodes to uninstall: $TARGET_NODES"
+    for NODE_TYPE in $TARGET_NODES; do
       [ -n "$NODE_TYPE" ] || continue
       log "Uninstalling node: $NODE_TYPE"
       case "$NODE_TYPE" in
