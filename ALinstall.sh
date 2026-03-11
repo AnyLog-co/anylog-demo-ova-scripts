@@ -410,9 +410,15 @@ ensure_kv() {
   k="$1"
   v="$2"
   f="$3"
+
+  if [ "$k" = "LICENSE_KEY" ]; then
+    v="\"$v\""
+  fi
+
   if [ ! -f "$f" ]; then
     : > "$f"
   fi
+
   if grep -qE "^${k}=" "$f"; then
     sedi "s|^${k}=.*$|${k}=${v}|" "$f"
   else
