@@ -477,7 +477,7 @@ apply_env_to_configs() {
 get_running_anylog_nodes() {
   running_containers=$(docker ps --format '{{.Names}}' 2>/dev/null)
   if [ "$DEMO_MODE" = true ]; then
-    for NODE_TYPE in anylog-standalone-operator anylog-operator gui-1 grafana; do
+    for NODE_TYPE in anylog-standalone-operator anylog-operator  grafana; do
       if printf '%s\n' "$running_containers" | grep -q "$NODE_TYPE"; then
         printf '%s\n' "$NODE_TYPE"
       fi
@@ -501,14 +501,14 @@ do_start() {
     done
 
     log "== Starting AnyLog GUI =="
-    docker_cmd run -it -d -p 31800:31800 -p 8080:8080 --restart unless-stopped \
-      -e REACT_APP_API_URL="http://${IP_ADDR}:8080" \
-      --name gui-1 anylogco/remote-gui:beta2
+#    docker_cmd run -it -d -p 31800:31800 -p 8080:8080 --restart unless-stopped \
+#      -e REACT_APP_API_URL="http://${IP_ADDR}:8080" \
+#      --name gui-1 anylogco/remote-gui:beta2
 
     log "== Starting Grafana =="
     docker_cmd run -it -d -p 3000:3000 --restart unless-stopped \
       -e DATASOURCE_URL="http://${IP_ADDR}:32149" \
-      --name grafana anylogco/oh-grafana:la
+      --name grafana anylogco/oh-grafana:latest
   else
     for NODE_TYPE in $NODE_LIST; do
       log "Starting node: $NODE_TYPE"
