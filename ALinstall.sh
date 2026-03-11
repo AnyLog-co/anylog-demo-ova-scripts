@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------
 # Cross-platform support: macOS (Darwin) + Linux (apt/yum/dnf/zypper/pacman)
@@ -377,6 +377,8 @@ while getopts ':e:n:skd' opt; do
 done
 shift $((OPTIND - 1))
 
+ACTION="${1:-}"
+
 if [ "$DEMO_MODE" = true ]; then
   NODE_LIST="$VALID_NODES"
 elif [ -n "$NODE_LIST_ARG" ]; then
@@ -398,10 +400,10 @@ fi
 
 LOG_DIR="$AL_DIR/logs"
 mkdir -p "$LOG_DIR"
-LOG_FILE="${LOG_DIR}/ALinstall_${1:-unknown}_$(date '+%Y%m%d_%H%M%S').log"
+LOG_FILE="${LOG_DIR}/ALinstall_${ACTION:-unknown}_$(date '+%Y%m%d_%H%M%S').log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-log "=== ALinstall started: OS=${OS_TYPE} command='${1:-unknown}' env='${ENV_FILE}' nodes='${NODE_LIST}' demo=${DEMO_MODE} ==="
+log "=== ALinstall started: OS=${OS_TYPE} command='${ACTION:-unknown}' env='${ENV_FILE}' nodes='${NODE_LIST}' demo=${DEMO_MODE} ==="
 log "Log file: ${LOG_FILE}"
 
 ensure_kv() {
@@ -474,6 +476,14 @@ apply_env_to_configs() {
   done < "$ENV_FILE"
 }
 
+get_target_nodes() {
+  if [ "$DEMO_MODE" = true ]; then
+    printf "%s\n" "anylog-standalone-operator anylog-operator grafana"
+  else
+    printf "%s\n" "$NODE_LIST"
+  fi
+}
+
 get_running_anylog_nodes() {
   running_containers=$(docker ps --format '{{.Names}}' 2>/dev/null)
   if [ "$DEMO_MODE" = true ]; then
@@ -531,12 +541,12 @@ do_stop() {
   fi
 
   log "Nodes to stop: $(printf '%s ' $RUNNING_NODES)"
-  printf '%s\n' "$RUNNING_NODES" | while IFS= read -r NODE_TYPE; do
+  while IFS= read -r NODE_TYPE; do
     [ -n "$NODE_TYPE" ] || continue
     log "Stopping node: $NODE_TYPE"
     make_cmd down ANYLOG_TYPE="${NODE_TYPE}"
     log "Node stopped: $NODE_TYPE"
-  done
+  done <<< "$RUNNING_NODES"
 
   if [ "$AUTO_STOP" = true ]; then
     cleanup_anylogco_containers
@@ -715,17 +725,12 @@ do_uninstall() {
     fi
   fi
 
-  if [ "$DEMO_MODE" = true ]; then
-    TARGET_NODES="anylog-standalone-operator anylog-operator grafana"
+  RUNNING_NODES=$(get_running_anylog_nodes)
+  if [ -z "$RUNNING_NODES" ]; then
+    log "No running AnyLog nodes found matching: ${NODE_LIST} — nothing to uninstall via make clean."
   else
-    TARGET_NODES="$NODE_LIST"
-  fi
-
-  if [ -z "$TARGET_NODES" ]; then
-    log "No AnyLog nodes specified for uninstall."
-  else
-    log "Nodes to uninstall: $TARGET_NODES"
-    for NODE_TYPE in $TARGET_NODES; do
+    log "Nodes to uninstall: $(printf '%s ' $RUNNING_NODES)"
+    printf '%s\n' "$RUNNING_NODES" | while IFS= read -r NODE_TYPE; do
       [ -n "$NODE_TYPE" ] || continue
       log "Uninstalling node: $NODE_TYPE"
       case "$NODE_TYPE" in
@@ -766,7 +771,7 @@ do_update() {
   log "=== Update complete ==="
 }
 
-case "$1" in
+case "$ACTION" in
   install)   do_install ;;
   uninstall) do_uninstall ;;
   update)    do_update ;;
