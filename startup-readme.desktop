@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=gnome-terminal -- bash -c "/home/edgelake/Anylog/startup.sh"
+Exec=xdg-open /home/edgelake/Anylog/README.html
 Hidden=false
 X-GNOME-Autostart-enabled=true
 Name=Startup Script and README
