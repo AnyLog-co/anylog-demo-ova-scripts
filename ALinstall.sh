@@ -542,12 +542,12 @@ do_stop() {
 
   if [ "$DEMO_MODE" = true ]; then
     docker_cmd kill grafana
+    docker_cmd rm -f grafana
 
   fi
  
   if [ "$AUTO_STOP" = true ]; then
     cleanup_anylogco_containers
-    docker_cmd rm -f grafana
     
   fi
 }
