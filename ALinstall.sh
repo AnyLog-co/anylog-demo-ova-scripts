@@ -680,6 +680,8 @@ do_install() {
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
           ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
+          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
           ;;
         anylog-standalone-operator)
           apply_env_to_configs "$NENV"
@@ -688,6 +690,8 @@ do_install() {
           ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
           ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
+          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
           ;;
         anylog-standalone-publisher)
           apply_env_to_configs "$NENV"
@@ -696,6 +700,8 @@ do_install() {
           ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
           ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
+          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
           ;;
         *)
           log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}'."
