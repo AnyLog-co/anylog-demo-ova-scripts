@@ -554,8 +554,15 @@ do_stop() {
     log "Node stopped: $NODE_TYPE"
   done <<< "$RUNNING_NODES"
 
+  if [ "$DEMO_MODE" = true ]; then
+    docker_cmd kill grafana
+
+  fi
+ 
   if [ "$AUTO_STOP" = true ]; then
     cleanup_anylogco_containers
+    dockker_cmd rm -f grafana
+    
   fi
 }
 
@@ -621,6 +628,8 @@ do_install() {
           ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
           ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
+          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
           ;;
         anylog-operator)
           apply_env_to_configs "$NENV"
@@ -749,9 +758,6 @@ do_uninstall() {
         anylog-generic|anylog-master|anylog-operator|anylog-query|anylog-publisher|anylog-standalone-operator|anylog-standalone-publisher)
           log "Removing containers and images for $NODE_TYPE..."
           make_cmd clean ANYLOG_TYPE="${NODE_TYPE}"
-          ;;
-        gui-1)
-          docker_cmd rm -f gui-1 >/dev/null 2>&1 || true
           ;;
         grafana)
           docker_cmd rm -f grafana >/dev/null 2>&1 || true
