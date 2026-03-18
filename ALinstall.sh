@@ -528,15 +528,6 @@ do_start() {
 }
 
 do_stop() {
-  RUNNING_NODES=$(get_running_anylog_nodes)
-
-  if [ -z "$RUNNING_NODES" ]; then
-    log "No running AnyLog nodes found: nothing to stop."
-    if [ "$AUTO_STOP" = true ]; then
-      cleanup_anylogco_containers
-    fi
-    return 0
-  fi
 
   while read -r name image; do
     case "$image" in
@@ -544,6 +535,8 @@ do_stop() {
         log "Stopping container $name ($image)"
         docker_cmd kill "$name" >/dev/null 2>&1 || log "Warning: failed to stop container $name"
         ;;
+      *)
+        log "No anylog containers to stop" 
     esac
   done < <(docker ps --format '{{.Names}} {{.Image}}')
 
