@@ -532,7 +532,7 @@ do_stop() {
 
   RUNNING_NODES=$(get_running_anylog_nodes)
   if [ -z "$RUNNING_NODES" ]; then
-    log "No running AnyLog nodes found matching: ${NODE_LIST} — nothing to stop."
+    log "No running AnyLog nodes found: — nothing to stop."
     if [ "$AUTO_STOP" = true ]; then
       cleanup_anylogco_containers
     fi
