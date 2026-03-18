@@ -280,7 +280,7 @@ cleanup_anylogco_containers() {
   fi
 
   log "Checking for containers using images containing 'anylogco'..."
-  docker ps -a --format '{{.ID}} {{.Image}}' 2>/dev/null | \
+  docker_cmd ps -a --format '{{.ID}} {{.Image}}' 2>/dev/null | \
   while IFS=' ' read -r cid img; do
     case "$img" in
       *anylogco*)
@@ -300,7 +300,7 @@ cleanup_anylogco_images() {
   fi
 
   log "Checking for images containing 'anylogco'..."
-  docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' 2>/dev/null | \
+  docker_cmd images --format '{{.Repository}}:{{.Tag}} {{.ID}}' 2>/dev/null | \
   while IFS=' ' read -r image_name image_id; do
     case "$image_name" in
       *anylogco*)
@@ -491,7 +491,7 @@ get_target_nodes() {
 }
 
 get_running_anylog_nodes() {
-  running_containers=$(docker ps --format '{{.Names}}' 2>/dev/null | grep -E 'anylog-co')
+  running_containers=$(docker_cmd ps --format '{{.Names}}' 2>/dev/null | grep -E 'anylog-co')
 
   if [ -z "$running_containers" ]; then
     return 0
@@ -528,8 +528,6 @@ do_start() {
 }
 
 do_stop() {
-  cd "$AL_DIR/node/docker-compose" || exit 1
-
   RUNNING_NODES=$(get_running_anylog_nodes)
   if [ -z "$RUNNING_NODES" ]; then
     log "No running AnyLog nodes found: — nothing to stop."
