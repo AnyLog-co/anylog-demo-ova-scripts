@@ -491,20 +491,13 @@ get_target_nodes() {
 }
 
 get_running_anylog_nodes() {
-  running_containers=$(docker ps --format '{{.Names}}' 2>/dev/null)
-  if [ "$DEMO_MODE" = true ]; then
-    for NODE_TYPE in anylog-standalone-operator anylog-operator  grafana; do
-      if printf '%s\n' "$running_containers" | grep -q "$NODE_TYPE"; then
-        printf '%s\n' "$NODE_TYPE"
-      fi
-    done
-  else
-    for node in $NODE_LIST; do
-      if printf '%s\n' "$running_containers" | grep -q "$node"; then
-        printf '%s\n' "$node"
-      fi
-    done
+  running_containers=$(docker ps --format '{{.Names}}' 2>/dev/null | grep -E 'anylog-co')
+
+  if [ -z "$running_containers" ]; then
+    return 0
   fi
+
+  printf '%s\n' "$running_containers"
 }
 
 do_start() {
@@ -547,12 +540,11 @@ do_stop() {
   fi
 
   log "Nodes to stop: $(printf '%s ' $RUNNING_NODES)"
-  while IFS= read -r NODE_TYPE; do
-    [ -n "$NODE_TYPE" ] || continue
+  for $node in $RUNNING_NODES; do
     log "Stopping node: $NODE_TYPE"
-    make_cmd down ANYLOG_TYPE="${NODE_TYPE}"
+    docker_cmd kill $node
     log "Node stopped: $NODE_TYPE"
-  done <<< "$RUNNING_NODES"
+  done 
 
   if [ "$DEMO_MODE" = true ]; then
     docker_cmd kill grafana
@@ -561,7 +553,7 @@ do_stop() {
  
   if [ "$AUTO_STOP" = true ]; then
     cleanup_anylogco_containers
-    dockker_cmd rm -f grafana
+    docker_cmd rm -f grafana
     
   fi
 }
