@@ -420,17 +420,15 @@ ensure_kv() {
   v="$2"
   f="$3"
 
-  if [ ! -f "$f" ]; then
-    : > "$f"
-  fi
- 
-  escaped_value=$(printf '%s\n' "$v" | sed 's/[&/\]/\\&/g')
+  [ ! -f "$f" ] && touch "$f"
 
-  if grep -qE "^${k}=" "$f"; then
-    sedi "s|^${k}=.*$|${k}=${escaped_value}|" "$f"
-  else
-    printf '\n%s=%s\n' "$k" "$v" >> "$f"
-  fi
+  # Remove existing key
+  grep -v "^${k}=" "$f" > "${f}.tmp"
+
+  # Append new value safely
+  printf '%s=%s\n' "$k" "$v" >> "${f}.tmp"
+
+  mv "${f}.tmp" "$f"
 }
 
 if [ ! -f "$ENV_FILE" ]; then
