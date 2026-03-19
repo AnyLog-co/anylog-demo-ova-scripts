@@ -476,9 +476,9 @@ else
   NEW_KEY="$CURRENT_KEY"
 fi
 
-log "== New key $NEW_KEY inserted =="
-
 ensure_kv "LICENSE_KEY" "$NEW_KEY" "$ENV_FILE"
+
+log "== New key inserted =="
 
 apply_env_to_configs() {
   base_cfg="$1"
@@ -630,14 +630,14 @@ do_install() {
       log "Configuring node: $NODE_TYPE"
       NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
       log "Cleaning node: $NODE_TYPE"
-make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
+      make_cmd up ANYLOG_TYPE="$NODE_TYPE"
       log "Node configured: $NODE_TYPE"
     done
   else
     for NODE_TYPE in $NODE_LIST; do
       NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
       log "Cleaning node: $NODE_TYPE"
-make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
+      make_cmd up ANYLOG_TYPE="$NODE_TYPE"
       log "Node configured: $NODE_TYPE"
     done
   fi
@@ -679,7 +679,7 @@ do_uninstall() {
       [ -n "$NODE_TYPE" ] || continue
       log "Uninstalling node: $NODE_TYPE"
       log "Cleaning node: $NODE_TYPE"
-make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
+      make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
       log "Node uninstalled: $NODE_TYPE"
     done
   fi
