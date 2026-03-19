@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -32,293 +31,315 @@
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .wrap {
-      max-width: 980px;
-      margin: 40px auto 80px;
-      padding: 0 20px;
-    }
+    .wrap { max-width: 980px; margin: 40px auto 80px; padding: 0 20px; }
     header.hero {
       background: linear-gradient(160deg, rgba(96,165,250,.16), rgba(52,211,153,.12));
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px 24px;
-      box-shadow: 0 8px 28px rgba(0,0,0,.35);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px 24px; box-shadow: 0 8px 28px rgba(0,0,0,.35);
     }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 2rem;
-      letter-spacing: .3px;
-    }
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-    }
-    .badges {
-      margin-top: 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    h1 { margin: 0 0 8px; font-size: 2rem; letter-spacing: .3px; }
+    .subtitle { margin: 0; color: var(--muted); }
+    .badges { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; }
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      font-size: .9rem;
-      color: var(--text);
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px;
+      background: rgba(255,255,255,.03); font-size: .9rem; color: var(--text);
     }
-    .grid {
-      display: grid;
-      gap: 16px;
-    }
+    .grid { display: grid; gap: 16px; }
     @media (min-width: 900px) {
-      .grid.two { grid-template-columns: 1fr 1fr; }
+      .grid.two   { grid-template-columns: 1fr 1fr; }
       .grid.three { grid-template-columns: repeat(3, 1fr); }
     }
     section.card {
       background: linear-gradient(180deg, var(--panel), var(--panel-2));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.35);
     }
     section.card h2 {
-      margin-top: 0;
-      font-size: 1.25rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
+      margin-top: 0; font-size: 1.25rem;
+      border-bottom: 1px solid var(--border); padding-bottom: 8px;
     }
+    section.card h3 { font-size: 1.0rem; margin-top: 16px; margin-bottom: 4px; }
     .callout {
       border-left: 4px solid var(--accent);
       background: rgba(96,165,250,.06);
-      padding: 10px 12px;
-      border-radius: 8px;
+      padding: 10px 12px; border-radius: 8px;
     }
     .warn { border-left-color: var(--warn); background: rgba(245,158,11,.08); }
-    .ok { border-left-color: var(--accent-2); background: rgba(52,211,153,.08); }
+    .ok   { border-left-color: var(--accent-2); background: rgba(52,211,153,.08); }
     code, pre, kbd {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                   "Liberation Mono", "Courier New", monospace;
       font-size: .92rem;
     }
     pre {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      overflow-x: auto;
-      position: relative;
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; overflow-x: auto; position: relative;
     }
     .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      cursor: pointer;
-      font-size: .85rem;
+      position: absolute; top: 8px; right: 8px;
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: rgba(255,255,255,.06); color: var(--text);
+      cursor: pointer; font-size: .85rem;
     }
     kbd {
-      background: var(--kbd-bg);
-      border: 1px solid var(--border);
-      border-bottom-width: 3px;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-size: .85rem;
+      background: var(--kbd-bg); border: 1px solid var(--border);
+      border-bottom-width: 3px; border-radius: 6px;
+      padding: 2px 6px; font-size: .85rem;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      overflow: hidden;
-      border-radius: 10px;
-    }
-    th, td {
-      text-align: left;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    thead th {
-      background: rgba(255,255,255,.04);
-      font-weight: 600;
-    }
-    .footer {
-      margin-top: 30px;
-      color: var(--muted);
-      font-size: .95rem;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; border-radius: 10px; overflow: hidden; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    thead th { background: rgba(255,255,255,.04); font-weight: 600; }
+    .footer { margin-top: 30px; color: var(--muted); font-size: .95rem; }
     details { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
     details summary { cursor: pointer; font-weight: 600; }
     .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      font-size: .85rem;
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid var(--border); background: rgba(255,255,255,.04); font-size: .85rem;
     }
-  </style>
+</style>
 </head>
 <body>
 <div class="wrap">
-<header class="hero">
-<h1>▶️ AnyLog Demo – Quick Start</h1>
-<p class="subtitle">A concise, operator-friendly guide to launching, connecting to, and exploring the AnyLog edge data fabric demo.</p>
-<div class="badges">
-<span class="badge">OVA boots → containers auto‑start</span>
-<span class="badge">GUI, Query, Operator x2</span>
-<span class="badge">Local‑only endpoints</span>
-</div>
-</header>
-<div class="grid two" style="margin-top: 18px;">
-<section class="card">
-<h2>Start AnyLog Edge Data Fabric/Historian</h2>
-<p>If the installation does not autostart, you can manually start the Demo VM, launch Terminal and start the initial containers. This only has to be done the first time the VM runs</p>
-<pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/AnyLog
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <h1>&#x25B6;&#xFE0F; AnyLog Demo &#x2013; Quick Start</h1>
+    <p class="subtitle">A concise, operator-friendly guide to launching, connecting to, and exploring the AnyLog edge data fabric demo.</p>
+    <div class="badges">
+      <span class="badge">OVA boots &#x2192; containers auto&#x2011;start</span>
+      <span class="badge">GUI, Query, Operator x2</span>
+      <span class="badge">Local&#x2011;only endpoints</span>
+    </div>
+  </header>
+
+  <!-- ── Start + CLI ── -->
+  <div class="grid two" style="margin-top:18px;">
+    <section class="card">
+      <h2>Start AnyLog Edge Data Fabric/Historian</h2>
+      <p>If the installation does not autostart, launch Terminal and run the following. This only needs to be done the first time the VM starts.</p>
+      <pre id="code-start"><button class="copy-btn" data-target="code-start">Copy</button><code>cd ~/AnyLog
 ./ALinstall.sh -d -s install</code></pre>
-<p>This starts:</p>
-<ul>
-<li><strong>gui-1</strong> – Web UI for monitoring and data management</li>
-<li><strong>grafana</strong> - Sample Dashboard</li>
-<li><strong>AnyLog-Demo-standalone</strong> – Master (control plane)/perator (data operator)/Query (SQL over AnyLog"</li>
-<li><strong>AnyLog-Demo-operator2</strong> – Second data operator node</li>
-</ul>
-<p class="callout warn" style="margin-top:10px;">Note: After the initial starting of the services, wait several minutes while AnyLog services start up.</p>
-</section>
-<section class="card">
-<h2>AnyLog CLI</h2>
-<p>To connect to AnyLog CLI on the two nodes do the following steps:</p>
-<pre><code>cd ~/AnyLog/node/docker-compose</code></pre>
-<p>Then type:</p>
-<ul>
-  <li><code>make attach ANYLOG_TYPE=anylog-standalone</code> to access the query and operator1 CLI</li>
-  <li><code>make attach ANYLOG_TYPE=anylog-operator</code> to access the operator2 CLI</li>
-</ul>
-</section>
-</div>
-<section class="card">
-<h2>Service Endpoints</h2>
-<table>
-<thead>
-<tr><th>Service</th><th>Role</th><th>Endpoint</th></tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>GUI</strong> <span class="pill">gui-1</span></td>
-<td>Web UI</td>
-<td><a href="http://localhost:31800" rel="noopener" target="_blank">http://localhost:31800</a></td>
-</tr>
-<tr>
-<td><strong>Sample Grafana Dashboard</strong> <span class="pill">grafana</span></td>
-<td>Web UI</td>
-<td><a href="http://localhost:3000" rel="noopener" target="_blank">http://localhost:3000</a></td>
-</tr>
-<tr>
-<td><strong>Query Node REST</strong> <span class="pill">AnyLog-Demo-standalone</span></td>
-<td>SQL &amp; Fabric Query</td>
-<td><code>vmipaddr:32149</code></td>
-</tr>
-<tr>
-<td><strong>Operator Node REST</strong> <span class="pill">AnyLog-Demo-operator</span></td>
-<td>Data Ingest / Control</td>
-<td><code>vmipaddr:32152</code></td>
-</tr>
-<tr>
-</table>
-<details style="margin-top:12px;">
-<summary>Using the GUI with a node</summary>
-<p>Open the GUI and insert the <kbd>vmipaddr:Port</kbd> of a Query or Operator node in the Connection dialog, then click <em>Use</em>.</p>
-</details>
-</section>
-<div class="grid three">
-<section class="card">
-<h2>Monitor</h2>
-<p>Track resources and health across nodes from the GUI dashboard.</p>
-</section>
-<section class="card">
-<h2>Add Data</h2>
-<p>Load JSON‑formatted data into an <em>operator</em> node via the GUI.</p>
-</section>
-<section class="card">
-<h2>SQL Query</h2>
-<p>Build and run SQL queries from the <em>query</em> node’s GUI tool.</p>
-</section>
-</div>
-<section class="card">
-<h2>Blockchain Manager</h2>
-<p>Inspect blockchain metadata that underpins the data fabric.</p>
-</section>
-<section class="card">
-<h2>Default Demo Dataset</h2>
-<ul>
-<li><strong>Database:</strong> <code>new_company</code></li>
-<li><strong>Table:</strong> <code>rand_data</code></li>
-</ul>
-<div class="callout">This table is pre‑populated via a cloud MQTT feed on first launch.</div>
-</section>
-<section class="card">
-<h2>Add Your Own Data</h2>
-<ol>
-<li>
-<strong>Use the GUI (Operator node)</strong><br/>
-          Click <em>Add Data</em> and provide JSON‑formatted input.
-        </li>
-<li style="margin-top:8px;">
-<strong>Subscribe to a MQTT broker</strong><br/>
-<a href="https://github.com/AnyLog-co/documentation/blob/master/background%20processes.md" rel="noopener" target="_blank">
-            Background Processes (MQTT / Services)
-          </a>
-</li>
-<li style="margin-top:8px;">
-<strong>Insert via REST API</strong><br/>
-<a href="https://github.com/AnyLog-co/documentation/blob/master/using%20rest.md" rel="noopener" target="_blank">
-            Using REST
-          </a>
-</li>
-</ol>
-<div class="callout warn" style="margin-top:10px;">
-        Tip: Ensure you target an <em>operator</em> node for data insertion and the <em>query</em> node for read/SQL workflows.
-      </div>
-</section>
-<section class="card">
-<h2>Documentation</h2>
-<div class="grid two" style="margin-top:8px;">
-  <div>
-    <ul>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/getting%20started.md" rel="noopener" target="_blank">Getting Started</a></li>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/cli.md" rel="noopener" target="_blank">CLI Guide</a></li>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/anylog%20commands.md" rel="noopener" target="_blank">Command Reference</a> <span class="pill">official</span></li>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/starting%20an%20anylog%20instance.md" rel="noopener" target="_blank">Starting an AnyLog Instance</a></li>
-    </ul>
+      <p>This starts:</p>
+      <ul>
+        <li><strong>gui-1</strong> &#x2013; Web UI for monitoring and data management</li>
+        <li><strong>grafana</strong> &#x2013; Sample Dashboard</li>
+        <li><strong>AnyLog-Demo-standalone</strong> &#x2013; Master&nbsp;/&nbsp;Operator&nbsp;/&nbsp;Query node</li>
+        <li><strong>AnyLog-Demo-operator2</strong> &#x2013; Second data operator node</li>
+      </ul>
+      <p class="callout warn" style="margin-top:10px;">Note: After first start, wait several minutes while AnyLog services initialise.</p>
+    </section>
+
+    <section class="card">
+      <h2>AnyLog CLI</h2>
+      <p>To connect to the AnyLog CLI on either node:</p>
+      <pre><code>cd ~/AnyLog/node/docker-compose</code></pre>
+      <ul>
+        <li><code>make attach ANYLOG_TYPE=anylog-standalone</code> &#x2013; query &amp; operator&nbsp;1 CLI</li>
+        <li><code>make attach ANYLOG_TYPE=anylog-operator</code> &#x2013; operator&nbsp;2 CLI</li>
+      </ul>
+    </section>
   </div>
-  <div>
-    <ul>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/background%20processes.md" rel="noopener" target="_blank">Background Processes</a></li>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/using%20rest.md" rel="noopener" target="_blank">Using REST</a></li>
-      <li><a href="https://github.com/AnyLog-co/documentation/blob/master/basic%20anylog%20deployment.md" rel="noopener" target="_blank">Basic Deployment</a></li>
-      <li><a href="https://github.com/AnyLog-co/documentation" rel="noopener" target="_blank">Browse Full Documentation Repo</a></li>
-    </ul>
+
+  <!-- ── Service Endpoints ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>Service Endpoints</h2>
+    <table>
+      <thead><tr><th>Service</th><th>Role</th><th>Endpoint</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>GUI</strong> <span class="pill">gui-1</span></td>
+          <td>Web UI</td>
+          <td><a href="http://localhost:31800" target="_blank" rel="noopener">http://localhost:31800</a></td>
+        </tr>
+        <tr>
+          <td><strong>Grafana</strong> <span class="pill">grafana</span></td>
+          <td>Sample Dashboard</td>
+          <td><a href="http://localhost:3000" target="_blank" rel="noopener">http://localhost:3000</a></td>
+        </tr>
+        <tr>
+          <td><strong>Query Node REST</strong> <span class="pill">AnyLog-Demo-standalone</span></td>
+          <td>SQL &amp; Fabric Query</td>
+          <td><code>vmipaddr:32149</code></td>
+        </tr>
+        <tr>
+          <td><strong>Operator Node REST</strong> <span class="pill">AnyLog-Demo-operator</span></td>
+          <td>Data Ingest / Control</td>
+          <td><code>vmipaddr:32152</code></td>
+        </tr>
+      </tbody>
+    </table>
+    <details style="margin-top:12px;">
+      <summary>Using the GUI with a node</summary>
+      <p>Open the GUI and insert the <kbd>VM_IP:Port</kbd> of a Query or Operator node in the Connection dialog, then click <em>Use</em>.</p>
+    </details>
+  </section>
+
+  <!-- ── Monitor / Add Data / SQL ── -->
+  <div class="grid three" style="margin-top:16px;">
+    <section class="card"><h2>Monitor</h2><p>Track resources and health across nodes from the GUI dashboard.</p></section>
+    <section class="card"><h2>Add Data</h2><p>Load JSON&#x2011;formatted data into an <em>operator</em> node via the GUI.</p></section>
+    <section class="card"><h2>SQL Query</h2><p>Build and run SQL queries from the <em>query</em> node&#x2019;s GUI tool.</p></section>
   </div>
-</div>
-</section>
-<section class="card">
-<h2>Support</h2>
-<p>Contact us on Slack in <strong>EdgeLake</strong> or email support@anylog.network</p>
-</section>
-<p class="footer">
-      Pro tip: keep this page open on first boot. Use <kbd>Ctrl</kbd> + <kbd>L</kbd> to focus the address bar quickly, and <kbd>Alt</kbd> + <kbd>←</kbd> to navigate back.
-    </p>
-<section class="card"><h2>Credentials</h2><p>Default demo user credentials (change after first login):</p><ul><li><strong>Username:</strong> edgelake</li><li><strong>Password:</strong> edgelake</li></ul><div class="callout warn">Security note: The default password is 'edgelake'. For production or networked demos, change it immediately.</div></section></div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // Copy-to-clipboard buttons for pre blocks
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-target');
-        const pre = document.getElementById(id);
-        const text = pre ? pre.innerText.replace(/^Copy\\s*/,'') : '';
-        navi
+
+  <!-- ── Blockchain ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>Blockchain Manager</h2>
+    <p>Inspect blockchain metadata that underpins the data fabric.</p>
+  </section>
+
+  <!-- ── Default Dataset ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>Default Demo Dataset</h2>
+    <ul>
+      <li><strong>Database:</strong> <code>new_company</code></li>
+      <li><strong>Table:</strong> <code>rand_data</code></li>
+    </ul>
+    <div class="callout">This table is pre&#x2011;populated via a cloud MQTT feed on first launch.</div>
+  </section>
+
+  <!-- ── Add Your Own Data ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>Add Your Own Data</h2>
+    <ol>
+      <li><strong>Use the GUI (Operator node)</strong><br/>Click <em>Add Data</em> and provide JSON&#x2011;formatted input.</li>
+      <li style="margin-top:8px;"><strong>Subscribe to a MQTT broker</strong><br/>
+        <a href="https://github.com/AnyLog-co/documentation/blob/master/background%20processes.md" target="_blank" rel="noopener">Background Processes (MQTT / Services)</a></li>
+      <li style="margin-top:8px;"><strong>Insert via REST API</strong><br/>
+        <a href="https://github.com/AnyLog-co/documentation/blob/master/using%20rest.md" target="_blank" rel="noopener">Using REST</a></li>
+    </ol>
+    <div class="callout warn" style="margin-top:10px;">
+      Tip: Target an <em>operator</em> node for data insertion and the <em>query</em> node for read/SQL workflows.
+    </div>
+  </section>
+
+  <!-- ── Documentation ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>Documentation</h2>
+    <div class="grid two" style="margin-top:8px;">
+      <div><ul>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/getting%20started.md" target="_blank" rel="noopener">Getting Started</a></li>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/cli.md" target="_blank" rel="noopener">CLI Guide</a></li>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/anylog%20commands.md" target="_blank" rel="noopener">Command Reference</a> <span class="pill">official</span></li>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/starting%20an%20anylog%20instance.md" target="_blank" rel="noopener">Starting an AnyLog Instance</a></li>
+      </ul></div>
+      <div><ul>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/background%20processes.md" target="_blank" rel="noopener">Background Processes</a></li>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/using%20rest.md" target="_blank" rel="noopener">Using REST</a></li>
+        <li><a href="https://github.com/AnyLog-co/documentation/blob/master/basic%20anylog%20deployment.md" target="_blank" rel="noopener">Basic Deployment</a></li>
+        <li><a href="https://github.com/AnyLog-co/documentation" target="_blank" rel="noopener">Browse Full Documentation Repo</a></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- ── Claude Desktop MCP Integration ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>&#x1F916; Claude Desktop &#x2013; MCP Integration</h2>
+    <p>Claude Desktop can connect directly to the AnyLog MCP server on this VM,
+    letting you query industrial data, inspect policies, and run SQL using natural language.</p>
+
+    <h3>1 &#xB7; Install Claude Desktop</h3>
+    <ol>
+      <li>Download Claude Desktop from
+        <a href="https://claude.ai/download" target="_blank" rel="noopener">https://claude.ai/download</a>
+        and install it on your host machine.</li>
+      <li>Sign in with your Anthropic&nbsp;/&nbsp;Claude account.</li>
+    </ol>
+
+    <h3>2 &#xB7; Locate the config file</h3>
+    <table>
+      <thead><tr><th>OS</th><th>Config file path</th></tr></thead>
+      <tbody>
+        <tr><td>macOS</td>  <td><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></td></tr>
+        <tr><td>Windows</td><td><code>%APPDATA%\Claude\claude_desktop_config.json</code></td></tr>
+        <tr><td>Linux</td>  <td><code>~/.config/Claude/claude_desktop_config.json</code></td></tr>
+      </tbody>
+    </table>
+    <p>Create the file if it does not already exist.</p>
+
+    <h3>3 &#xB7; Add the AnyLog MCP server entry</h3>
+    <p>Paste the block below into <code>claude_desktop_config.json</code>.
+    If the file already has a <code>mcpServers</code> key, merge just the
+    inner <code>"anylog-demo"</code> object into the existing map.</p>
+    <pre id="code-mcp"><button class="copy-btn" data-target="code-mcp">Copy</button><code>{
+  "mcpServers": {
+    "anylog-demo": {
+      "type": "sse",
+      "url": "https://vmipaddr:32149/mcp/sse"
+    }
+  }
+}</code></pre>
+
+    <div class="callout warn" style="margin-top:12px;">
+      <strong>Self-signed TLS:</strong> The AnyLog MCP endpoint uses HTTPS with a self-signed certificate.
+      If Claude Desktop rejects the connection, start it from a terminal with
+      <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code> set, or add the AnyLog CA certificate
+      to your OS trust store.
+    </div>
+
+    <h3>4 &#xB7; Restart Claude Desktop</h3>
+    <p>Quit and reopen Claude Desktop. In <em>Settings &#x2192; MCP Servers</em> you should see
+    <strong>anylog-demo</strong> listed with a green connected indicator.</p>
+
+    <h3>5 &#xB7; Verify the connection</h3>
+    <p>Open a new conversation and try:</p>
+    <pre><code>List the databases available on the AnyLog network.</code></pre>
+    <p>Claude will invoke the <code>listDatabases</code> MCP tool and return results inline.</p>
+
+    <h3>Useful starter prompts</h3>
+    <ul>
+      <li><em>"What tables are in the new_company database?"</em></li>
+      <li><em>"Run SQL: SELECT * FROM rand_data LIMIT 10"</em></li>
+      <li><em>"Show the status of all AnyLog nodes."</em></li>
+      <li><em>"List all blockchain policies of type operator."</em></li>
+    </ul>
+
+    <div class="callout ok" style="margin-top:12px;">
+      <strong>MCP endpoint (after install):</strong>&nbsp;<code>https://vmipaddr:32149/mcp/sse</code>
+    </div>
+  </section>
+
+  <!-- ── Support ── -->
+  <section class="card" style="margin-top:16px;">
+    <h2>Support</h2>
+    <p>Contact us on Slack in <strong>EdgeLake</strong> or email
+      <a href="mailto:support@anylog.co">support@anylog.co</a>.</p>
+  </section>
+
+  <p class="footer">
+    Pro tip: keep this page open on first boot. Use <kbd>Ctrl</kbd>&nbsp;+&nbsp;<kbd>L</kbd> to focus
+    the address bar quickly, and <kbd>Alt</kbd>&nbsp;+&nbsp;<kbd>&#x2190;</kbd> to navigate back.
+  </p>
+
+  <!-- ── Credentials ── -->
+  <section class="card">
+    <h2>Credentials</h2>
+    <p>Default demo user credentials (change after first login):</p>
+    <ul>
+      <li><strong>Username:</strong> edgelake</li>
+      <li><strong>Password:</strong> edgelake</li>
+    </ul>
+    <div class="callout warn">
+      Security note: The default password is <code>edgelake</code>.
+      For production or networked demos, change it immediately.
+    </div>
+  </section>
+
+</div><!-- /.wrap -->
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id  = btn.getAttribute('data-target');
+      const pre = document.getElementById(id);
+      const text = pre ? pre.innerText.replace(/^Copy\s*/, '') : '';
+      navigator.clipboard.writeText(text).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => btn.textContent = prev, 1200);
+      });
+    });
+  });
+</script>
+</body>
+</html>
