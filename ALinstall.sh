@@ -361,14 +361,6 @@ NODE_LIST_ARG=""
 AUTO_START=false
 AUTO_STOP=false
 DEMO_MODE=false
-DOCKER_MAKEFILES_DIR="$AL_DIR/node/docker-compose/docker-makefiles"
-if [ -d "$DOCKER_MAKEFILES_DIR" ]; then
-  VALID_NODES=$(ls -d "$DOCKER_MAKEFILES_DIR"/*/ 2>/dev/null | xargs -n 1 basename)
-  NODE_LIST="$VALID_NODES"
-else
-  log "ERROR: Cannot find docker-makefiles directory at $DOCKER_MAKEFILES_DIR"
-  exit 1
-fi
 
 usage() {
   printf 'Usage: %s [-e env_file] [-n node1,node2,...] [-s] [-k] [-d] [install|uninstall|update|start|stop]\n' "$0"
@@ -602,6 +594,14 @@ do_install() {
     git pull --ff-only origin "${COMPOSE_VER}" || true
   else
     git clone -b "${COMPOSE_VER}" https://github.com/anylog-co/docker-compose
+    DOCKER_MAKEFILES_DIR="$AL_DIR/node/docker-compose/docker-makefiles"
+    if [ -d "$DOCKER_MAKEFILES_DIR" ]; then
+      VALID_NODES=$(ls -d "$DOCKER_MAKEFILES_DIR"/*/ 2>/dev/null | xargs -n 1 basename)
+      NODE_LIST="$VALID_NODES"
+    else
+      log "ERROR: Cannot find docker-makefiles directory at $DOCKER_MAKEFILES_DIR"
+      exit 1
+    fi
     cd docker-compose || exit 1
   fi
   docker_cmd login -u anyloguser -p dckr_pat_tWYofE1Jx68FXXE9kisQONXE2Sw
