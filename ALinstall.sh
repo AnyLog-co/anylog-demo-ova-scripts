@@ -192,6 +192,115 @@ restart_syslog() {
   esac
 }
 
+patch_readme() {
+  readme="$AL_DIR/README.html"
+  if [ ! -f "$readme" ]; then
+    log "README.html not found at $readme — skipping patch"
+    return 0
+  fi
+
+  log "Patching README.html: replacing 'vmipaddr' with ${IP_ADDR}..."
+  sedi "s/vmipaddr/${IP_ADDR}/g" "$readme"
+
+  # MCP port for the anylog-demo MCP SSE endpoint (same REST port as standalone)
+  MCP_PORT="32149"
+  MCP_URL="https://${IP_ADDR}:${MCP_PORT}/mcp/sse"
+
+  # Build the Claude Desktop section to insert before </body>
+  CLAUDE_SECTION=$(cat <<CLAUDE_HTML
+
+  <!-- Claude Desktop MCP Integration -->
+  <section class="card" style="margin-top:18px;">
+  <h2>🤖 Claude Desktop – MCP Integration</h2>
+  <p>Claude Desktop can connect directly to the AnyLog MCP server running on this VM,
+  letting you query industrial data, inspect policies, and run SQL in natural language.</p>
+
+  <h3 style="margin-top:14px;font-size:1.05rem;">1 · Install Claude Desktop</h3>
+  <ol>
+    <li>Download Claude Desktop from <a href="https://claude.ai/download" target="_blank" rel="noopener">https://claude.ai/download</a> and install it on your host machine.</li>
+    <li>Sign in with your Anthropic / Claude account.</li>
+  </ol>
+
+  <h3 style="margin-top:14px;font-size:1.05rem;">2 · Locate the config file</h3>
+  <table>
+    <thead><tr><th>OS</th><th>Path</th></tr></thead>
+    <tbody>
+      <tr><td>macOS</td><td><code>~/Library/Application Support/Claude/claude_desktop_config.json</code></td></tr>
+      <tr><td>Windows</td><td><code>%APPDATA%\\Claude\\claude_desktop_config.json</code></td></tr>
+      <tr><td>Linux</td><td><code>~/.config/Claude/claude_desktop_config.json</code></td></tr>
+    </tbody>
+  </table>
+  <p>Create the file if it does not already exist.</p>
+
+  <h3 style="margin-top:14px;font-size:1.05rem;">3 · Add the AnyLog MCP server entry</h3>
+  <p>Paste the block below into <code>claude_desktop_config.json</code>.
+  If the file already has a <code>mcpServers</code> key, add just the inner
+  <code>"anylog-demo"</code> object to the existing map.</p>
+  <pre><code>{
+  "mcpServers": {
+    "anylog-demo": {
+      "type": "sse",
+      "url": "${MCP_URL}"
+    }
+  }
+}</code></pre>
+  <div class="callout warn" style="margin-top:10px;">
+    <strong>Self-signed TLS:</strong> The AnyLog MCP endpoint uses HTTPS with a self-signed
+    certificate. If Claude Desktop refuses the connection, launch it from the terminal with
+    the environment variable <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code> set, or install the
+    AnyLog CA cert into your OS trust store.
+  </div>
+
+  <h3 style="margin-top:14px;font-size:1.05rem;">4 · Restart Claude Desktop</h3>
+  <p>Quit and reopen Claude Desktop. You should see <strong>anylog-demo</strong> listed
+  under <em>Settings → MCP Servers</em> with a green connected indicator.</p>
+
+  <h3 style="margin-top:14px;font-size:1.05rem;">5 · Verify the connection</h3>
+  <p>Open a new conversation and ask Claude:</p>
+  <pre><code>List the databases available on the AnyLog network.</code></pre>
+  <p>Claude will call the <code>listDatabases</code> MCP tool and return the results inline.</p>
+
+  <h3 style="margin-top:14px;font-size:1.05rem;">Useful starter prompts</h3>
+  <ul>
+    <li><em>"What tables are in the new_company database?"</em></li>
+    <li><em>"Run a SQL query: SELECT * FROM rand_data LIMIT 10"</em></li>
+    <li><em>"Show me the status of all AnyLog nodes."</em></li>
+    <li><em>"List all blockchain policies of type operator."</em></li>
+  </ul>
+
+  <div class="callout ok" style="margin-top:10px;">
+    <strong>MCP endpoint:</strong> <code>${MCP_URL}</code>
+  </div>
+  </section>
+CLAUDE_HTML
+)
+
+  # Inject before </body> — use a temp file to avoid shell quoting issues with sedi
+  tmp="${readme}.tmp"
+  # Use python for reliable multi-line injection (available on both macOS and Linux)
+  python3 - "$readme" "$tmp" <<PYEOF
+import sys, pathlib
+
+src  = pathlib.Path(sys.argv[1]).read_text(encoding='utf-8')
+dst  = pathlib.Path(sys.argv[2])
+marker = '</body>'
+section = r"""${CLAUDE_SECTION}"""
+
+if marker in src and 'Claude Desktop' not in src:
+    src = src.replace(marker, section + '\n' + marker, 1)
+
+dst.write_text(src, encoding='utf-8')
+PYEOF
+
+  if [ -f "$tmp" ] && [ -s "$tmp" ]; then
+    mv "$tmp" "$readme"
+    log "README.html patched with IP ${IP_ADDR} and Claude Desktop MCP instructions."
+  else
+    log "WARNING: README patch produced empty output — keeping original file."
+    rm -f "$tmp"
+  fi
+}
+
 configure_rsyslog_forwarding() {
   target_ip="$1"
   target_port="$2"
@@ -713,6 +822,9 @@ do_install() {
   else
     log "Install complete. Run '$0 [-n nodes] start' or re-run with -s to start nodes."
   fi
+
+  log "Patching README.html with detected IP and Claude Desktop MCP instructions..."
+  patch_readme
 
   log "=== Install complete ==="
 }
