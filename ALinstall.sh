@@ -422,14 +422,16 @@ ensure_kv() {
 
   [ ! -f "$f" ] && touch "$f"
 
-  # Remove existing key
-  grep -v "^${k}=" "$f" > "${f}.tmp"
+  tmp="${f}.tmp"
 
-  # Append new value safely
-  printf '%s=%s\n' "$k" "$v" >> "${f}.tmp"
+  # escape quotes
+  escaped_v=$(printf '%s' "$v" | sed 's/"/\\\"/g')
 
-  mv "${f}.tmp" "$f"
+  grep -v "^${k}=" "$f" > "$tmp"
+  printf '%s="%s"\n' "$k" "$escaped_v" >> "$tmp"
+  mv "$tmp" "$f"
 }
+
 
 if [ ! -f "$ENV_FILE" ]; then
   log "ERROR: Environment file not found: $ENV_FILE"
@@ -462,7 +464,6 @@ if [ -z "$CURRENT_KEY" ]; then
   printf 'Please enter your new LICENSE_KEY: '
   read NEW_KEY
   # Normalize smart quotes → regular quotes
-  NEW_KEY=$(printf '%s' "$NEW_KEY" | tr '“”' '"')
 
   if [ -z "$NEW_KEY" ]; then
     log "== No new key entered.  Exiting =="
