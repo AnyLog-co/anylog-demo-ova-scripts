@@ -423,9 +423,11 @@ ensure_kv() {
   if [ ! -f "$f" ]; then
     : > "$f"
   fi
+ 
+  escaped_value=$(printf '%s\n' "$v" | sed 's/[&/\]/\\&/g')
 
   if grep -qE "^${k}=" "$f"; then
-    sedi "s|^${k}=.*$|${k}=${v}|" "$f"
+    sedi "s|^${k}=.*$|${k}=${escaped_value}|" "$f"
   else
     printf '\n%s=%s\n' "$k" "$v" >> "$f"
   fi
