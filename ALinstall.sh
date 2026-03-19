@@ -204,7 +204,7 @@ patch_readme() {
 
   # MCP port for the anylog-demo MCP SSE endpoint (same REST port as standalone)
   MCP_PORT="32149"
-  MCP_URL="https://${IP_ADDR}:${MCP_PORT}/mcp/sse"
+  MCP_URL="http://${IP_ADDR}:${MCP_PORT}/mcp/sse"
 
   # Build the Claude Desktop section to insert before </body>
   CLAUDE_SECTION=$(cat <<CLAUDE_HTML
