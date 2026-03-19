@@ -361,8 +361,14 @@ NODE_LIST_ARG=""
 AUTO_START=false
 AUTO_STOP=false
 DEMO_MODE=false
-VALID_NODES="anylog-generic anylog-master anylog-operator anylog-query anylog-publisher anylog-standalone-operator anylog-standalone-publisher"
-NODE_LIST="$VALID_NODES"
+DOCKER_MAKEFILES_DIR="$AL_DIR/node/docker-compose/docker-makefiles"
+if [ -d "$DOCKER_MAKEFILES_DIR" ]; then
+  VALID_NODES=$(ls -d "$DOCKER_MAKEFILES_DIR"/*/ 2>/dev/null | xargs -n 1 basename)
+  NODE_LIST="$VALID_NODES"
+else
+  log "ERROR: Cannot find docker-makefiles directory at $DOCKER_MAKEFILES_DIR"
+  exit 1
+fi
 
 usage() {
   printf 'Usage: %s [-e env_file] [-n node1,node2,...] [-s] [-k] [-d] [install|uninstall|update|start|stop]\n' "$0"
@@ -539,17 +545,20 @@ do_start() {
 }
 
 do_stop() {
+  log "Stopping nodes using make down..."
 
-  while read -r name image; do
-    case "$image" in
-      *anylogco*)
-        log "Stopping container $name ($image)"
-        docker_cmd kill "$name" >/dev/null 2>&1 || log "Warning: failed to stop container $name"
-        ;;
-      *)
-        log "No anylog containers to stop" 
-    esac
-  done < <(docker ps --format '{{.Names}} {{.Image}}')
+  if [ -d "$AL_DIR/node/docker-compose" ]; then
+    cd "$AL_DIR/node/docker-compose" || exit 1
+
+    for NODE_TYPE in $NODE_LIST; do
+      log "Stopping node: $NODE_TYPE"
+      make_cmd down ANYLOG_TYPE="$NODE_TYPE"
+      log "Node stopped: $NODE_TYPE"
+    done
+  else
+    log "No docker-compose directory found — nothing to stop"
+  fi
+}} {{.Image}}')
 
   if [ "$DEMO_MODE" = true ]; then
     docker_cmd kill grafana
@@ -617,103 +626,15 @@ do_install() {
     for NODE_TYPE in anylog-standalone-operator anylog-operator; do
       log "Configuring node: $NODE_TYPE"
       NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
-      case "$NODE_TYPE" in
-        anylog-standalone-operator)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-standalone" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
-          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
-          ;;
-        anylog-operator)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-operator" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "CLUSTER_NAME" "${h}-operator-cluster" "$NENV"
-          ensure_kv "ANYLOG_SERVER_PORT" "32158" "$NENV"
-          ensure_kv "ANYLOG_REST_PORT" "32159" "$NENV"
-          ensure_kv "ANYLOG_BROKER_PORT" "32160" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ;;
-        *)
-          log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}' in demo install."
-          exit 1
-          ;;
-      esac
+      log "Cleaning node: $NODE_TYPE"
+make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
       log "Node configured: $NODE_TYPE"
     done
   else
     for NODE_TYPE in $NODE_LIST; do
       NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
-      case "$NODE_TYPE" in
-        anylog-generic)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-standalone" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ;;
-        anylog-master)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-master" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ;;
-        anylog-operator)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-operator" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ;;
-        anylog-publisher)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-publisher" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "CLUSTER_NAME" "${h}-cluster" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ;;
-        anylog-query)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-query" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
-          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
-          ;;
-        anylog-standalone-operator)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-standalone-operator" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
-          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
-          ;;
-        anylog-standalone-publisher)
-          apply_env_to_configs "$NENV"
-          ensure_kv "NODE_NAME" "${h}-standalone-publisher" "$NENV"
-          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
-          ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster" "$NENV"
-          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
-          ensure_kv "ENABLE_REMOTE_GUI" "true"       "$NENV"
-          ensure_kv "REMOTE_GUI_NIC" "${NIC_TYPE}"   "$NENV"
-          ;;
-        *)
-          log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}'."
-          exit 1
-          ;;
-      esac
+      log "Cleaning node: $NODE_TYPE"
+make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
       log "Node configured: $NODE_TYPE"
     done
   fi
@@ -754,18 +675,8 @@ do_uninstall() {
     printf '%s\n' "$RUNNING_NODES" | while IFS= read -r NODE_TYPE; do
       [ -n "$NODE_TYPE" ] || continue
       log "Uninstalling node: $NODE_TYPE"
-      case "$NODE_TYPE" in
-        anylog-generic|anylog-master|anylog-operator|anylog-query|anylog-publisher|anylog-standalone-operator|anylog-standalone-publisher)
-          log "Removing containers and images for $NODE_TYPE..."
-          make_cmd clean ANYLOG_TYPE="${NODE_TYPE}"
-          ;;
-        grafana)
-          docker_cmd rm -f grafana >/dev/null 2>&1 || true
-          ;;
-        *)
-          log "WARNING: Unknown NODE_TYPE '${NODE_TYPE}' — skipping make clean for it."
-          ;;
-      esac
+      log "Cleaning node: $NODE_TYPE"
+make_cmd clean ANYLOG_TYPE="$NODE_TYPE"
       log "Node uninstalled: $NODE_TYPE"
     done
   fi
