@@ -464,6 +464,7 @@ if [ -z "$CURRENT_KEY" ]; then
   printf 'Please enter your new LICENSE_KEY: '
   read NEW_KEY
   # Normalize smart quotes → regular quotes
+  NEW_KEY=$(printf '%s' "$NEW_KEY" | tr '“”' '"')
 
   if [ -z "$NEW_KEY" ]; then
     log "== No new key entered.  Exiting =="
