@@ -265,17 +265,10 @@
   "mcpServers": {
     "anylog-demo": {
       "type": "sse",
-      "url": "https://vmipaddr:32149/mcp/sse"
+      "url": "http://vmipaddr:32149/mcp/sse"
     }
   }
 }</code></pre>
-
-    <div class="callout warn" style="margin-top:12px;">
-      <strong>Self-signed TLS:</strong> The AnyLog MCP endpoint uses HTTPS with a self-signed certificate.
-      If Claude Desktop rejects the connection, start it from a terminal with
-      <code>NODE_TLS_REJECT_UNAUTHORIZED=0</code> set, or add the AnyLog CA certificate
-      to your OS trust store.
-    </div>
 
     <h3>4 &#xB7; Restart Claude Desktop</h3>
     <p>Quit and reopen Claude Desktop. In <em>Settings &#x2192; MCP Servers</em> you should see
@@ -295,7 +288,7 @@
     </ul>
 
     <div class="callout ok" style="margin-top:12px;">
-      <strong>MCP endpoint (after install):</strong>&nbsp;<code>https://vmipaddr:32149/mcp/sse</code>
+      <strong>MCP endpoint (after install):</strong>&nbsp;<code>http://vmipaddr:32149/mcp/sse</code>
     </div>
   </section>
 
