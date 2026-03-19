@@ -464,7 +464,8 @@ if [ -z "$CURRENT_KEY" ]; then
   printf 'Please enter your new LICENSE_KEY: '
   read NEW_KEY
   # Normalize smart quotes → regular quotes
-  NEW_KEY=$(printf '%s' "$NEW_KEY" | tr '“”' '"')
+# normalize smart quotes safely
+  NEW_KEY=$(printf '%s' "$NEW_KEY" | sed 's/[“”]/"/g')
 
   if [ -z "$NEW_KEY" ]; then
     log "== No new key entered.  Exiting =="
@@ -474,6 +475,8 @@ if [ -z "$CURRENT_KEY" ]; then
 else
   NEW_KEY="$CURRENT_KEY"
 fi
+
+log "== New key $NEW_KEY inserted =="
 
 ensure_kv "LICENSE_KEY" "$NEW_KEY" "$ENV_FILE"
 
