@@ -617,6 +617,10 @@ do_install() {
     log "Enabling syslog..."
     enable_syslog
 
+if [ "$DEMO_MODE" = true ]; then
+    log "Enabling syslog..."
+    enable_syslog
+
     log "Installing autostart entry..."
     if [ -f "$AL_DIR/startup-readme.desktop" ]; then
       install_autostart "$AL_DIR/startup-readme.desktop"
@@ -628,17 +632,95 @@ do_install() {
     for NODE_TYPE in anylog-standalone-operator anylog-operator; do
       log "Configuring node: $NODE_TYPE"
       NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
-      log "Cleaning node: $NODE_TYPE"
-      make_cmd up ANYLOG_TYPE="$NODE_TYPE"
+      case "$NODE_TYPE" in
+        anylog-standalone-operator)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-operator)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "CLUSTER_NAME" "${h}-operator-cluster" "$NENV"
+          ensure_kv "ANYLOG_SERVER_PORT" "32158" "$NENV"
+          ensure_kv "ANYLOG_REST_PORT" "32159" "$NENV"
+          ensure_kv "ANYLOG_BROKER_PORT" "32160" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        *)
+          log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}' in demo install."
+          exit 1
+          ;;
+      esac
       log "Node configured: $NODE_TYPE"
     done
   else
     for NODE_TYPE in $NODE_LIST; do
       NENV="docker-makefiles/${NODE_TYPE}/node_configs.env"
-      log "Cleaning node: $NODE_TYPE"
-      make_cmd up ANYLOG_TYPE="$NODE_TYPE"
+      case "$NODE_TYPE" in
+        anylog-generic)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-master)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-operator)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-publisher)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "CLUSTER_NAME" "${h}-cluster" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-query)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-standalone-operator)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        anylog-standalone-publisher)
+          apply_env_to_configs "$NENV"
+          ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
+          ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster" "$NENV"
+          ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
+          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ;;
+        *)
+          log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}'."
+          exit 1
+          ;;
+      esac
       log "Node configured: $NODE_TYPE"
     done
+  fi
+
+  if [ "$AUTO_START" = true ]; then
+    log "=== Auto-start: launching nodes ==="
+    do_start
+  else
+    log "Install complete. Run '$0 [-n nodes] start' or re-run with -s to start nodes."
   fi
 
   if [ "$AUTO_START" = true ]; then
