@@ -558,6 +558,11 @@ do_stop() {
   fi
 
   if [ "$DEMO_MODE" = true ]; then
+    for NODE_TYPE in anylog-standalone-operator anylog-operator; do
+      log "Stopping node: $NODE_TYPE"
+      make_cmd down ANYLOG_TYPE="$NODE_TYPE"
+      log "Node stopped: $NODE_TYPE"
+    done
     docker_cmd kill grafana
     docker_cmd rm -f grafana
 
