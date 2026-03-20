@@ -617,10 +617,6 @@ do_install() {
     log "Enabling syslog..."
     enable_syslog
 
-if [ "$DEMO_MODE" = true ]; then
-    log "Enabling syslog..."
-    enable_syslog
-
     log "Installing autostart entry..."
     if [ -f "$AL_DIR/startup-readme.desktop" ]; then
       install_autostart "$AL_DIR/startup-readme.desktop"
@@ -714,13 +710,6 @@ if [ "$DEMO_MODE" = true ]; then
       esac
       log "Node configured: $NODE_TYPE"
     done
-  fi
-
-  if [ "$AUTO_START" = true ]; then
-    log "=== Auto-start: launching nodes ==="
-    do_start
-  else
-    log "Install complete. Run '$0 [-n nodes] start' or re-run with -s to start nodes."
   fi
 
   if [ "$AUTO_START" = true ]; then
