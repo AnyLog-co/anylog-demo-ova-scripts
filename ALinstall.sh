@@ -424,8 +424,7 @@ ensure_kv() {
 
   tmp="${f}.tmp"
 
-  # Wrap value in single quotes; escape any literal ' as '\\'' 
-  # Single-quoted values have no special chars, so JSON survives `source`
+  # Wrap in single quotes; escape any literal ' as '\\'' so JSON survives source
   escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
 
   grep -v "^${k}=" "$f" > "$tmp"
@@ -438,27 +437,6 @@ if [ ! -f "$ENV_FILE" ]; then
   log "ERROR: Environment file not found: $ENV_FILE"
   exit 1
 fi
-# Sanitize any legacy backslash-escaped double-quoted values before sourcing.
-# Converts  KEY="val\"json\""  ->  KEY='val"json"'  so source survives JSON.
-_SAN_PY=$(mktemp /tmp/alinstall_san.XXXXXX.py)
-cat > "$_SAN_PY" << 'PYSAN'
-import sys, re
-fname = sys.argv[1]
-lines = open(fname).readlines()
-out = []
-for line in lines:
-    m = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)="(.*)"$', line.rstrip('\n'))
-    if m:
-        k, v = m.group(1), m.group(2)
-        v = v.replace('\\"', '"')
-        v = v.replace("'", "'\\''")
-        out.append(f"{k}='{v}'\n")
-    else:
-        out.append(line)
-open(fname, 'w').writelines(out)
-PYSAN
-python3 "$_SAN_PY" "$ENV_FILE"
-rm -f "$_SAN_PY"
 set -a
 . "$ENV_FILE"
 set +a
