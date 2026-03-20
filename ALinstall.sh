@@ -424,8 +424,7 @@ ensure_kv() {
 
   tmp="${f}.tmp"
 
-  # Wrap value in single quotes, escaping any literal single quotes as '\''
-  # This is the only quoting style that survives `source` with JSON/special chars
+  # Wrap in single quotes; escape any literal ' as '\\'' so source survives JSON values
   escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
 
   grep -v "^${k}=" "$f" > "$tmp"
@@ -438,6 +437,28 @@ if [ ! -f "$ENV_FILE" ]; then
   log "ERROR: Environment file not found: $ENV_FILE"
   exit 1
 fi
+# Sanitize legacy backslash-escaped double-quoted values before sourcing
+# e.g.  KEY="foo\\"bar"  ->  KEY='foo"bar'  so source survives JSON in values
+_sanitize_env() {
+  local f="$1" tmp="${1}.san_tmp"
+  python3 - "$f" "$tmp" << 'PYSAN'
+import sys, re
+src, dst = sys.argv[1], sys.argv[2]
+out = []
+for line in open(src):
+    m = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)="(.*)"\n?$', line)
+    if m:
+        key, val = m.group(1), m.group(2)
+        val = val.replace('\\"', '"')
+        val = val.replace("'", "'\\''")
+        out.append(f"{key}='{val}'\n")
+    else:
+        out.append(line)
+open(dst, 'w').writelines(out)
+PYSAN
+  [ -f "$tmp" ] && mv "$tmp" "$f"
+}
+_sanitize_env "$ENV_FILE"
 set -a
 . "$ENV_FILE"
 set +a
@@ -450,7 +471,7 @@ if [ -z "$IP_ADDR" ]; then
   exit 1
 fi
 
-CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=['\"]//;s/['\"]\$//")
+CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=[\"']//;s/[\"']$//")
 
 if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
   log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
