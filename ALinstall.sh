@@ -424,11 +424,12 @@ ensure_kv() {
 
   tmp="${f}.tmp"
 
-  # escape quotes
-  escaped_v=$(printf '%s' "$v" | sed 's/"/\\\"/g')
+  # Wrap value in single quotes, escaping any literal single quotes as '\''
+  # This is the only quoting style that survives `source` with JSON/special chars
+  escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
 
   grep -v "^${k}=" "$f" > "$tmp"
-  printf '%s="%s"\n' "$k" "$escaped_v" >> "$tmp"
+  printf "%s='%s'\n" "$k" "$escaped_v" >> "$tmp"
   mv "$tmp" "$f"
 }
 
@@ -449,7 +450,7 @@ if [ -z "$IP_ADDR" ]; then
   exit 1
 fi
 
-CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | cut -d '"' -f2)
+CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=['\"]//;s/['\"]\$//")
 
 if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
   log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
