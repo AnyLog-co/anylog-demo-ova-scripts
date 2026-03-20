@@ -424,7 +424,7 @@ ensure_kv() {
 
   tmp="${f}.tmp"
 
-  # Wrap in single quotes; escape any literal ' as '\\'' so JSON survives source
+  # Wrap value in single quotes; escape any literal ' as '\\'' so JSON survives source
   escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
 
   grep -v "^${k}=" "$f" > "$tmp"
@@ -553,7 +553,6 @@ do_stop() {
   else
     log "No docker-compose directory found — nothing to stop"
   fi
-}} {{.Image}}')
 
   if [ "$DEMO_MODE" = true ]; then
     docker_cmd kill grafana
