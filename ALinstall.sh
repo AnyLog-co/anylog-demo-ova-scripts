@@ -506,7 +506,7 @@ get_target_nodes() {
 }
 
 get_running_anylog_nodes() {
-  running_containers=$(docker_cmd ps --format '{{.Image}}' 2>/dev/null | grep -E 'anylog-co')
+  running_containers=$(docker_cmd ps --format '{{.Names}} ' 2>/dev/null | grep -E 'anylog-')
 
   if [ -z "$running_containers" ]; then
     return 0
