@@ -424,7 +424,8 @@ ensure_kv() {
 
   tmp="${f}.tmp"
 
-  # Wrap in single quotes; escape any literal ' as '\\'' so source survives JSON values
+  # Wrap value in single quotes; escape any literal ' as '\\'' 
+  # Single-quoted values have no special chars, so JSON survives `source`
   escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
 
   grep -v "^${k}=" "$f" > "$tmp"
@@ -437,28 +438,27 @@ if [ ! -f "$ENV_FILE" ]; then
   log "ERROR: Environment file not found: $ENV_FILE"
   exit 1
 fi
-# Sanitize legacy backslash-escaped double-quoted values before sourcing
-# e.g.  KEY="foo\\"bar"  ->  KEY='foo"bar'  so source survives JSON in values
-_sanitize_env() {
-  local f="$1" tmp="${1}.san_tmp"
-  python3 - "$f" "$tmp" << 'PYSAN'
+# Sanitize any legacy backslash-escaped double-quoted values before sourcing.
+# Converts  KEY="val\"json\""  ->  KEY='val"json"'  so source survives JSON.
+_SAN_PY=$(mktemp /tmp/alinstall_san.XXXXXX.py)
+cat > "$_SAN_PY" << 'PYSAN'
 import sys, re
-src, dst = sys.argv[1], sys.argv[2]
+fname = sys.argv[1]
+lines = open(fname).readlines()
 out = []
-for line in open(src):
-    m = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)="(.*)"\n?$', line)
+for line in lines:
+    m = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)="(.*)"$', line.rstrip('\n'))
     if m:
-        key, val = m.group(1), m.group(2)
-        val = val.replace('\\"', '"')
-        val = val.replace("'", "'\\''")
-        out.append(f"{key}='{val}'\n")
+        k, v = m.group(1), m.group(2)
+        v = v.replace('\\"', '"')
+        v = v.replace("'", "'\\''")
+        out.append(f"{k}='{v}'\n")
     else:
         out.append(line)
-open(dst, 'w').writelines(out)
+open(fname, 'w').writelines(out)
 PYSAN
-  [ -f "$tmp" ] && mv "$tmp" "$f"
-}
-_sanitize_env "$ENV_FILE"
+python3 "$_SAN_PY" "$ENV_FILE"
+rm -f "$_SAN_PY"
 set -a
 . "$ENV_FILE"
 set +a
@@ -471,7 +471,7 @@ if [ -z "$IP_ADDR" ]; then
   exit 1
 fi
 
-CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=[\"']//;s/[\"']$//")
+CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=['\"]//;s/['\"]$//")
 
 if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
   log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
