@@ -452,7 +452,7 @@ if [ -z "$IP_ADDR" ]; then
   exit 1
 fi
 
-CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=['\"]//;s/['\"]$//")
+CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=//;s$")
 
 if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
   log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
