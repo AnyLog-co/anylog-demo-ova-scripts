@@ -424,11 +424,14 @@ ensure_kv() {
 
   tmp="${f}.tmp"
 
-  # Wrap value in single quotes; escape any literal ' as '\\'' so JSON survives source
-  escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
-
   grep -v "^${k}=" "$f" > "$tmp"
-  printf "%s='%s'\n" "$k" "$escaped_v" >> "$tmp"
+  if [ "$k" = "LICENSE_KEY" ]; then
+    printf "%s=%s\n" "$k" "$v" >> "$tmp"
+  else
+    # Wrap value in single quotes; escape any literal ' as '\\'' so JSON survives source
+    escaped_v=$(printf '%s' "$v" | sed "s/'/'\\\\''/g")
+    printf "%s='%s'\n" "$k" "$escaped_v" >> "$tmp"
+  fi
   mv "$tmp" "$f"
 }
 
