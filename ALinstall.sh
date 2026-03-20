@@ -638,6 +638,7 @@ do_install() {
           ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
           ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+          ensure_kv "ENABLE_REMOTE_GUI" "true "$NENV"
           ;;
         anylog-operator)
           apply_env_to_configs "$NENV"
