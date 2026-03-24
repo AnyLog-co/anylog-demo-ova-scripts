@@ -218,8 +218,11 @@ Demo mode installs the full preconfigured environment:
 # Start previously installed nodes
 ./ALinstall.sh start
 
-# Stop all running AnyLog nodes
-./ALinstall.sh stop
+# Stop AnyLog demo nodes
+./ALinstall.sh -d stop
+
+# Stop AnyLog nodes
+./ALinstall.sh -n anylog-master, anylog-query stop
 ```
 
 ### Logging
