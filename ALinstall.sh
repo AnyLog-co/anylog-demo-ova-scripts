@@ -452,36 +452,36 @@ if [ -z "$IP_ADDR" ]; then
   exit 1
 fi
 
-CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=//")
+#CURRENT_KEY=$(grep '^LICENSE_KEY=' "$ENV_FILE" | sed "s/^LICENSE_KEY=//")
 
-if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
-  log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
-  printf 'LICENSE_KEY variable not found in %s\n' "$ENV_FILE"
-  exit 1
-fi
+#if ! grep -q '^LICENSE_KEY=' "$ENV_FILE"; then
+#  log "== no environment variable LICENSE_KEY in $ENV_FILE.  Exiting =="
+#  printf 'LICENSE_KEY variable not found in %s\n' "$ENV_FILE"
+#  exit 1
+#fi
 
-if [ -z "$CURRENT_KEY" ]; then
-  log "== Adding new license key =="
-  printf 'LICENSE_KEY is currently blank.\n'
-  printf 'You can request a new license key at https://www.anylog.network/download\n'
-  printf 'Please enter your new LICENSE_KEY: '
-  read NEW_KEY
+#if [ -z "$CURRENT_KEY" ]; then
+#  log "== Adding new license key =="
+#  printf 'LICENSE_KEY is currently blank.\n'
+#  printf 'You can request a new license key at https://www.anylog.network/download\n'
+#  printf 'Please enter your new LICENSE_KEY: '
+#  read NEW_KEY
   # Normalize smart quotes → regular quotes
 # normalize smart quotes safely
-  NEW_KEY=$(printf '%s' "$NEW_KEY" | sed 's/[“”]/"/g')
+#  NEW_KEY=$(printf '%s' "$NEW_KEY" | sed 's/[“”]/"/g')
 
-  if [ -z "$NEW_KEY" ]; then
-    log "== No new key entered.  Exiting =="
-    printf 'No key entered. Exiting.\n'
-    exit 1
-  fi
-else
-  NEW_KEY="$CURRENT_KEY"
-fi
+#  if [ -z "$NEW_KEY" ]; then
+#    log "== No new key entered.  Exiting =="
+#    printf 'No key entered. Exiting.\n'
+#    exit 1
+#  fi
+#else
+#  NEW_KEY="$CURRENT_KEY"
+#fi
 
-ensure_kv "LICENSE_KEY" "$NEW_KEY" "$ENV_FILE"
+#ensure_kv "LICENSE_KEY" "$NEW_KEY" "$ENV_FILE"
 
-log "== New key inserted =="
+#log "== New key inserted =="
 
 apply_env_to_configs() {
   base_cfg="$1"
@@ -563,8 +563,8 @@ do_stop() {
       make_cmd down ANYLOG_TYPE="$NODE_TYPE"
       log "Node stopped: $NODE_TYPE"
     done
-    docker_cmd kill grafana
-    docker_cmd rm -f grafana
+#    docker_cmd kill grafana
+#    docker_cmd rm -f grafana
 
   fi
  
@@ -642,7 +642,7 @@ do_install() {
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ensure_kv "ENABLE_REMOTE_GUI" "true" "$NENV"
           ;;
         anylog-operator)
@@ -653,7 +653,7 @@ do_install() {
           ensure_kv "ANYLOG_REST_PORT" "32159" "$NENV"
           ensure_kv "ANYLOG_BROKER_PORT" "32160" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         *)
           log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}' in demo install."
@@ -670,47 +670,47 @@ do_install() {
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         anylog-master)
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         anylog-operator)
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "CLUSTER_NAME" "${h}-standalone-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         anylog-publisher)
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "CLUSTER_NAME" "${h}-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         anylog-query)
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         anylog-standalone-operator)
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "CLUSTER_NAME" "${h}-standalone-operator-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         anylog-standalone-publisher)
           apply_env_to_configs "$NENV"
           ensure_kv "LEDGER_CONN" "${IP_ADDR}:32148" "$NENV"
           ensure_kv "CLUSTER_NAME" "${h}-standalone-publisher-cluster" "$NENV"
           ensure_kv "NIC_TYPE" "${NIC_TYPE}" "$NENV"
-          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
+#          ensure_kv "LICENSE_KEY" "$NEW_KEY" "$NENV"
           ;;
         *)
           log "ERROR: Unknown NODE_TYPE '${NODE_TYPE}'."
